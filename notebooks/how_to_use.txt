@@ -1,0 +1,12 @@
+# 1. Clonar repositório
+git clone https://github.com/seu-usuario/fenomenos-transporte.git
+cd fenomenos-transporte
+
+# 2. Instalar dependências
+pip install -r requirements.txt
+
+# 3. Executar qualquer notebook
+jupyter lab notebooks/
+
+# 4. Ou executar via linha de comando
+jupyter execute notebooks/02_balancos_conservacao.ipynb

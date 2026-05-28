@@ -1,0 +1,15 @@
+fenomenos-transporte-codes/
+├── README.md                  # Guia de uso, mapeamento livro↔código, licenças
+├── requirements.txt           # Dependências Python
+├── LICENSE                    # MIT
+├── src/
+│   ├── __init__.py
+│   ├── pipe_flow_solver.py    # Vol 1, Cap 4 (Darcy-Weisbach, Colebrook, Bombas)
+│   ├── advection_diffusion_1d.py # Vol 1 Cap 3 / Vol 2 Cap 5 (Solução analítica + numérica)
+│   ├── thermal_resistance.py  # Vol 2, Cap 2 (Redes térmicas, aletas, convecção/radiação)
+│   └── inverse_calibration.py # Vol 2, Apêndice (Levenberg-Marquardt, covariância)
+├── notebooks/
+│   ├── demo_pipe_flow.ipynb
+│   └── demo_advection_diffusion.ipynb
+└── data/
+    └── synthetic_experiments.csv
