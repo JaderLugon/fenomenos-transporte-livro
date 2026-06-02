@@ -1,15 +1,52 @@
-fenomenos-transporte-codes/
-├── README.md                  # Guia de uso, mapeamento livro↔código, licenças
-├── requirements.txt           # Dependências Python
-├── LICENSE                    # MIT
+fenomenos-transporte-livro/
+├── README.md
+├── LICENSE
+├── .gitignore
+├── requirements.txt
+├── environment.yml
+├── CITATION.cff
+├── docs/
+│   ├── figures/
+│   ├── tables/
+│   └── assets/
 ├── src/
 │   ├── __init__.py
-│   ├── pipe_flow_solver.py    # Vol 1, Cap 4 (Darcy-Weisbach, Colebrook, Bombas)
-│   ├── advection_diffusion_1d.py # Vol 1 Cap 3 / Vol 2 Cap 5 (Solução analítica + numérica)
-│   ├── thermal_resistance.py  # Vol 2, Cap 2 (Redes térmicas, aletas, convecção/radiação)
-│   └── inverse_calibration.py # Vol 2, Apêndice (Levenberg-Marquardt, covariância)
+│   ├── fluid_mechanics.py
+│   ├── heat_transfer.py
+│   ├── mass_transfer.py
+│   ├── numerical_methods.py
+│   ├── inverse_problems.py
+│   └── utils.py
 ├── notebooks/
-│   ├── demo_pipe_flow.ipynb
-│   └── demo_advection_diffusion.ipynb
-└── data/
-    └── synthetic_experiments.csv
+│   ├── 00_setup_check.ipynb
+│   ├── 01_fundamentos_fluidos.ipynb
+│   ├── 02_balancos_conservacao.ipynb
+│   ├── 03_escoamento_tubulacoes.ipynb
+│   ├── 04_hidrodinamica_canais.ipynb
+│   ├── 05_percolacao_meio_poroso.ipynb
+│   ├── 06_transferencia_calor.ipynb
+│   ├── 07_aletras_superficies.ipynb
+│   ├── 08_trocadores_calor.ipynb
+│   ├── 09_adveccao_dispersao.ipynb
+│   ├── 10_problemas_inversos.ipynb
+│   └── generate_qrcodes.ipynb  ← NOVO: Gera QR Codes
+├── data/
+│   ├── rio_macae/
+│   ├── propriedades_materiais/
+│   └── casos_estudo/
+├── tests/
+│   ├── test_fluid_mechanics.py
+│   ├── test_heat_transfer.py
+│   └── test_numerical.py
+├── latex/
+│   ├── main.tex
+│   ├── cap1.tex
+│   ├── cap2.tex
+│   └── ...
+└── qwen_integration/
+    ├── qwen_client.py          ← NOVO: Cliente API Qwen
+    ├── chat_interface.ipynb    ← NOVO: Interface interativa
+    └── prompt_templates/
+        ├── explicacao_conceito.txt
+        ├── resolucao_exercicio.txt
+        └── geracao_codigo.txt

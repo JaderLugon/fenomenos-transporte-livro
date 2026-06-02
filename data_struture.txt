@@ -1,0 +1,13 @@
+data/
+├── rio_macae/
+│   ├── geometria.csv          # Largura, profundidade, declividade
+│   ├── hidrograma.csv         # Vazão vs tempo
+│   └── parametros.yaml        # n, S0, condições de contorno
+├── propriedades_materiais/
+│   ├── condutividade_termica.csv
+│   ├── viscosidade_fluidos.csv
+│   └── van_genuchten_params.csv
+└── casos_estudo/
+    ├── forno_padaria.yaml
+    ├── dissipador_cpu.yaml
+    └── caldeira_industrial.yaml

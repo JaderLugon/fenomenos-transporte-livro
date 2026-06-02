@@ -1,0 +1,7 @@
+@book{lugon2026fenomenos,
+  title={Fenômenos de Transporte: Fundamentos e Modelagem Computacional},
+  author={Lugon Junior, Jader},
+  year={2026},
+  publisher={Repositório GitHub},
+  url={https://github.com/JaderLugon/fenomenos-transporte-livro}
+}
