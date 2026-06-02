@@ -23,97 +23,21 @@ from typing import Dict, List, Optional
 
 
 # Configuração dos capítulos
-CHAPTERS: Dict[str, Dict] = {
-    "cap1": {
-        "title": "Introdução aos Fenômenos de Transporte",
-        "volume": 1,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap1.tex",
-        "notebook": "notebooks/01_fundamentos_fluidos.ipynb",
-        "data_folder": "data/fundamentos/",
-        "qwen_context": "fen_trans_vol1_cap1"
-    },
-    "cap2": {
-        "title": "Fundamentos dos Fluidos e Viscosidade",
-        "volume": 1,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap2.tex",
-        "notebook": "notebooks/01_fundamentos_fluidos.ipynb",
-        "data_folder": "data/fluid_properties/",
-        "qwen_context": "fen_trans_vol1_cap2"
-    },
-    "cap3": {
-        "title": "Balanços e Equações de Conservação",
-        "volume": 1,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap3.tex",
-        "notebook": "notebooks/02_balancos_conservacao.ipynb",
-        "data_folder": "data/conservation/",
-        "qwen_context": "fen_trans_vol1_cap3"
-    },
-    "cap4": {
-        "title": "Escoamento em Tubulações e Bombeamento",
-        "volume": 1,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap4.tex",
-        "notebook": "notebooks/03_escoamento_tubulacoes.ipynb",
-        "data_folder": "data/pipe_flow/",
-        "qwen_context": "fen_trans_vol1_cap4"
-    },
-    "cap5": {
-        "title": "Hidrodinâmica de Canais Abertos",
-        "volume": 1,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap5.tex",
-        "notebook": "notebooks/04_hidrodinamica_canais.ipynb",
-        "data_folder": "data/rio_macae/",
-        "qwen_context": "fen_trans_vol1_cap5"
-    },
-    "cap6": {
-        "title": "Percolação em Meio Poroso",
-        "volume": 1,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap6.tex",
-        "notebook": "notebooks/05_percolacao_meio_poroso.ipynb",
-        "data_folder": "data/porous_media/",
-        "qwen_context": "fen_trans_vol1_cap6"
-    },
-    "cap7": {
-        "title": "Fundamentos de Transferência de Calor",
-        "volume": 2,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap7.tex",
-        "notebook": "notebooks/06_transferencia_calor.ipynb",
-        "data_folder": "data/heat_transfer/",
-        "qwen_context": "fen_trans_vol2_cap7"
-    },
-    "cap8": {
-        "title": "Transferência de Calor em Solos",
-        "volume": 2,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap8.tex",
-        "notebook": "notebooks/06_transferencia_calor.ipynb",
-        "data_folder": "data/soil_thermal/",
-        "qwen_context": "fen_trans_vol2_cap8"
-    },
-    "cap9": {
-        "title": "Aletas e Superfícies Estendidas",
-        "volume": 2,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap9.tex",
-        "notebook": "notebooks/07_aletras_superficies.ipynb",
-        "data_folder": "data/fins/",
-        "qwen_context": "fen_trans_vol2_cap9"
-    },
-    "cap10": {
-        "title": "Trocadores de Calor",
-        "volume": 2,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap10.tex",
-        "notebook": "notebooks/08_trocadores_calor.ipynb",
-        "data_folder": "data/heat_exchangers/",
-        "qwen_context": "fen_trans_vol2_cap10"
-    },
-    "cap11": {
-        "title": "Advecção e Dispersão em Corpos Hídricos",
-        "volume": 2,
-        "url_base": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/latex/cap11.tex",
-        "notebook": "notebooks/09_adveccao_dispersao.ipynb",
-        "data_folder": "data/dispersion/",
-        "qwen_context": "fen_trans_vol2_cap11"
-    }
-}
+from typing import Dict
 
+CHAPTERS: Dict[str, str] = {
+    "cap1": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/01_fundamentos_fluidos.ipynb",
+    "cap2": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/02_fundamentos_fluidos.ipynb",
+    "cap3": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/03_balancos_conservacao.ipynb",
+    "cap4": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/04_escoamento_tubulacoes.ipynb",
+    "cap5": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/05_hidrodinamica_canais.ipynb",
+    "cap6": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/06_percolacao_meio_poroso.ipynb",
+    "cap7": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/07_transferencia_calor.ipynb",
+    "cap8": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/08_transferencia_calor.ipynb",
+    "cap9": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/09_aletras_superficies.ipynb",
+    "cap10": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/10_trocadores_calor.ipynb",
+    "cap11": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/11_adveccao_dispersao.ipynb"
+}
 
 def build_qr_payload(chapter_id: str, include_chat: bool = True) -> str:
     """

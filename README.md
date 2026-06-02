@@ -18,7 +18,7 @@
 
 
 
-Esta coleção integra \*\*Mecânica dos Fluidos\*\*, \*\*Transferência de Calor e Massa\*\*, e \*\*Modelagem Computacional\*\* em uma jornada progressiva que parte dos balanços fundamentais, avança para soluções analíticas clássicas e culmina em simulações numéricas modernas.
+Este livro integra \*\*Mecânica dos Fluidos\*\*, \*\*Transferência de Calor e Massa\*\*, e \*\*Modelagem Computacional\*\* em uma jornada progressiva que parte dos balanços fundamentais, avança para soluções analíticas clássicas e culmina em simulações numéricas modernas.
 
 
 
@@ -36,45 +36,45 @@ Esta coleção integra \*\*Mecânica dos Fluidos\*\*, \*\*Transferência de Calo
 
 
 
-\## 📚 Estrutura da Coleção
+\## 📚 Estrutura do Livro
 
 
 
-\### Volume I - Mecânica dos Fluidos Aplicada
-
-| Capítulo | Título | Notebook | QR Code |
-
-|----------|--------|----------|---------|
-
-| 1 | Introdução e Analogias | `01\_fundamentos\_fluidos.ipynb` | \[🔗](qr/cap1.png) |
-
-| 2 | Fundamentos e Viscosidade | `01\_fundamentos\_fluidos.ipynb` | \[🔗](qr/cap2.png) |
-
-| 3 | Balanços e Conservação | `02\_balancos\_conservacao.ipynb` | \[🔗](qr/cap3.png) |
-
-| 4 | Escoamento em Tubulações | `03\_escoamento\_tubulacoes.ipynb` | \[🔗](qr/cap4.png) |
-
-| 5 | Hidrodinâmica de Canais | `04\_hidrodinamica\_canais.ipynb` | \[🔗](qr/cap5.png) |
-
-| 6 | Percolação em Meio Poroso | `05\_percolacao\_meio\_poroso.ipynb` | \[🔗](qr/cap6.png) |
-
-
-
-\### Volume II - Transferência de Calor e Massa
+\### Parte I - Mecânica dos Fluidos Aplicada
 
 | Capítulo | Título | Notebook | QR Code |
 
 |----------|--------|----------|---------|
 
-| 7 | Fundamentos de Calor | `06\_transferencia\_calor.ipynb` | \[🔗](qr/cap7.png) |
+| 1 | Introdução e Analogias | `01\\\\\\\_intro\\\_analogias.ipynb` | \[🔗](qr/cap1.png) |
 
-| 8 | Calor em Solos | `06\_transferencia\_calor.ipynb` | \[🔗](qr/cap8.png) |
+| 2 | Fundamentos e Viscosidade | `cap02\\\\\\\_fundamentos\\\\\\\_fluidos.ipynb` | \[🔗](qr/cap2.png) |
 
-| 9 | Aletas e Superfícies | `07\_aletras\_superficies.ipynb` | \[🔗](qr/cap9.png) |
+| 3 | Balanços e Conservação | `cap03\\\\\\\_balancos\\\\\\\_conservacao.ipynb` | \[🔗](qr/cap3.png) |
 
-| 10 | Trocadores de Calor | `08\_trocadores\_calor.ipynb` | \[🔗](qr/cap10.png) |
+| 4 | Escoamento em Tubulações | `cap04\\\\\\\_escoamento\\\\\\\_tubulacoes.ipynb` | \[🔗](qr/cap4.png) |
 
-| 11 | Advecção e Dispersão | `09\_adveccao\_dispersao.ipynb` | \[🔗](qr/cap11.png) |
+| 5 | Hidrodinâmica de Canais | `cap05\\\\\\\_hidrodinamica\\\\\\\_canais.ipynb` | \[🔗](qr/cap5.png) |
+
+| 6 | Percolação em Meio Poroso | `cap06\\\\\\\_percolacao\\\\\\\_meio\\\\\\\_poroso.ipynb` | \[🔗](qr/cap6.png) |
+
+
+
+\### Parte II - Transferência de Calor e Massa
+
+| Capítulo | Título | Notebook | QR Code |
+
+|----------|--------|----------|---------|
+
+| 7 | Fundamentos de Calor | `cap07\\\_fundamentos\\\\\\\_transferencia\\\\\\\_calor.ipynb` | \[🔗](qr/cap7.png) |
+
+| 8 | Calor em Solos | `cap08\\\\\\\_transferencia\\\\\\\_calor\\\\\\\_solo.ipynb` | \[🔗](qr/cap8.png) |
+
+| 9 | Aletas e Superfícies | `cap09\\\\\\\_aletas\\\\\\\_superficies\\\\\\\_estendidas.ipynb` | \[🔗](qr/cap9.png) |
+
+| 10 | Trocadores de Calor | `cap10\\\\\\\_trocadores\\\\\\\_calor.ipynb` | \[🔗](qr/cap10.png) |
+
+| 11 | Advecção e Dispersão | `cap11\\\\\\\_adveccao\\\\\\\_dispersao\\\_corpos\\\_hidricos.ipynb` | \[🔗](qr/cap11.png) |
 
 
 
@@ -94,7 +94,7 @@ Esta coleção integra \*\*Mecânica dos Fluidos\*\*, \*\*Transferência de Calo
 
 ```bash
 
-\# Clone o repositório
+\\\\# Clone o repositório
 
 git clone https://github.com/JaderLugon/fenomenos-transporte-livro.git
 
@@ -102,19 +102,21 @@ cd fenomenos-transporte-livro
 
 
 
-\# Crie ambiente virtual (opcional mas recomendado)
+\\\\# Crie ambiente virtual (opcional mas recomendado)
 
 python -m venv venv
 
 source venv/bin/activate  # Linux/Mac
 
-\# ou
+\\\\# ou
 
-venv\\Scripts\\activate  # Windows
+venv\\\\\\\\Scripts\\\\\\\\activate  # Windows
 
 
 
-\# Instale dependências
+\\\\# Instale dependências
 
 pip install -r requirements.txt
+
+
 
