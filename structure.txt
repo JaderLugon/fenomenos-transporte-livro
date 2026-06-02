@@ -26,6 +26,7 @@ fenomenos-transporte-livro/
 │   └── transferencia_calor_solo.py
 ├── notebooks/
 │   ├── 00_setup_check.ipynb
+│   ├── cap01_cap01_introducao_fenomenos_transporte.ipynb
 │   ├── cap02_fundamentos_fluidos.ipynb
 │   ├── cap03_balancos_transportes_reynolds.ipynb
 │   ├── cap04_escoamento_tubulacoes.ipynb
