@@ -1,424 +1,640 @@
-#!/usr/bin/env python3
 """
-Cliente para integração com API Qwen (DashScope)
-Para uso educacional no livro "Fenômenos de Transporte"
+qwen_client.py — Cliente Python para integração com a API do Qwen.
 
-Configuração:
-1. Obtenha API Key em: https://dashscope.aliyun.com/
-2. Configure variável de ambiente: QWEN_API_KEY
-3. Ou passe diretamente no construtor (não recomendado para produção)
+Este módulo fornece uma interface simplificada para acessar os modelos Qwen
+(Qwen3.7, Qwen-Max, Qwen-Plus, etc.) através da API da Alibaba Cloud (DashScope)
+ou de endpoints compatíveis com OpenAI.
 
-Uso básico:
-    from qwen_client import QwenClient
-    client = QwenClient()
-    resposta = client.ask(chapter="cap4", topic="Colebrook-White", level="graduation")
+Autor: Jader Lugon Junior
+Livro: Fenômenos de Transporte: Fundamentos e Modelagem Computacional
+Repositório: https://github.com/JaderLugon/fenomenos-transporte-livro
+
+Licença: MIT
 """
 
 import os
 import json
+import time
 import logging
 from pathlib import Path
-from typing import Optional, Dict, List, Union
+from typing import Optional, List, Dict, Union, Any
 from dataclasses import dataclass, field
-from datetime import datetime
+
+# Tentativa de importação das dependências
+try:
+    import openai
+    HAS_OPENAI = True
+except ImportError:
+    HAS_OPENAI = False
 
 try:
-    from dashscope import Generation
-    from dashscope.api_entities.dashscope_response import GenerationResponse
-    DASHSCOPE_AVAILABLE = True
+    import requests
+    HAS_REQUESTS = True
 except ImportError:
-    DASHSCOPE_AVAILABLE = False
-    logging.warning("dashscope não instalado. Execute: pip install dashscope")
+    HAS_REQUESTS = False
+
 
 # Configuração de logging
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 logger = logging.getLogger(__name__)
 
 
-@dataclass
-class ChapterContext:
-    """Contexto estruturado de um capítulo para prompts da IA."""
-    chapter_id: str
-    title: str
-    volume: int
-    key_concepts: List[str]
-    equations: Dict[str, str] = field(default_factory=dict)
-    examples: List[Dict] = field(default_factory=list)
-    difficulty_levels: List[str] = field(default_factory=lambda: ["graduation", "postgrad"])
-    
-    def to_prompt_snippet(self) -> str:
-        """Converte contexto para formato de prompt."""
-        lines = [
-            f"### CONTEXTO DO CAPÍTULO {self.chapter_id.upper()}",
-            f"**Título**: {self.title}",
-            f"**Volume**: {self.volume}",
-            f"**Conceitos-chave**: {', '.join(self.key_concepts)}",
-        ]
-        if self.equations:
-            lines.append("\n**Equações principais**:")
-            for name, eq in self.equations.items():
-                lines.append(f"- {name}: `{eq}`")
-        return "\n".join(lines)
+# ============================================================================
+# CONSTANTES E CONFIGURAÇÕES
+# ============================================================================
 
+# Modelos disponíveis
+MODELOS_DISPONIVEIS = {
+    'qwen3.7': 'qwen3.7',
+    'qwen-max': 'qwen-max',
+    'qwen-plus': 'qwen-plus',
+    'qwen-turbo': 'qwen-turbo',
+    'qwen-long': 'qwen-long',
+}
+
+# Endpoints padrão
+ENDPOINTS = {
+    'dashscope': 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+    'openai': 'https://api.openai.com/v1',
+}
+
+# Caminho para templates de prompt
+TEMPLATES_DIR = Path(__file__).parent / 'prompt_templates'
+
+
+# ============================================================================
+# CLASSES AUXILIARES
+# ============================================================================
+
+@dataclass
+class Mensagem:
+    """Representa uma mensagem em uma conversa."""
+    role: str  # 'system', 'user', 'assistant'
+    content: str
+    timestamp: float = field(default_factory=time.time)
+    
+    def to_dict(self) -> Dict[str, str]:
+        return {'role': self.role, 'content': self.content}
+
+
+@dataclass
+class RespostaQwen:
+    """Representa uma resposta da API do Qwen."""
+    content: str
+    modelo: str
+    tokens_usados: Dict[str, int]
+    tempo_resposta: float
+    finish_reason: str
+    raw_response: Optional[Dict] = None
+    
+    def __str__(self) -> str:
+        return self.content
+
+
+# ============================================================================
+# CLASSE PRINCIPAL: QwenClient
+# ============================================================================
 
 class QwenClient:
     """
-    Cliente simplificado para API Qwen com foco educacional.
+    Cliente para interação com a API do Qwen.
     
-    Recursos:
-    - Templates de prompt pré-configurados para Fenômenos de Transporte
-    - Cache de respostas para reduzir chamadas à API
-    - Formatação de saída em Markdown/LaTeX
-    - Modo offline com respostas pré-definidas (fallback)
+    Suporta autenticação via:
+    - Variável de ambiente: QWEN_API_KEY
+    - Parâmetro direto no construtor
+    
+    Exemplos
+    --------
+    >>> client = QwenClient()
+    >>> resposta = client.perguntar("Explique a Lei de Fourier")
+    >>> print(resposta)
+    
+    >>> # Com contexto pedagógico
+    >>> client = QwenClient(modelo='qwen3.7', temperatura=0.3)
+    >>> resposta = client.explicar_conceito("Número de Reynolds", capitulo=4)
     """
-    
-    # Modelos suportados
-    SUPPORTED_MODELS = {
-        "qwen-turbo": {"cost": "baixo", "speed": "rápido", "context": "8k"},
-        "qwen-plus": {"cost": "médio", "speed": "balanceado", "context": "32k"},
-        "qwen-max": {"cost": "alto", "speed": "detalhado", "context": "32k"},
-    }
     
     def __init__(
         self,
         api_key: Optional[str] = None,
-        model: str = "qwen-plus",
-        cache_dir: Optional[Path] = None,
-        offline_mode: bool = False
+        modelo: str = 'qwen3.7',
+        temperatura: float = 0.7,
+        max_tokens: int = 2048,
+        endpoint: str = 'dashscope',
+        timeout: int = 60,
+        max_retries: int = 3
     ):
         """
         Inicializa o cliente Qwen.
         
-        Args:
-            api_key: Chave da API DashScope (ou use variável QWEN_API_KEY)
-            model: Modelo a ser usado (ver SUPPORTED_MODELS)
-            cache_dir: Diretório para cache de respostas
-            offline_mode: Se True, usa apenas respostas pré-definidas
+        Parâmetros
+        ----------
+        api_key : str, opcional
+            Chave de API. Se não fornecida, busca em QWEN_API_KEY.
+        modelo : str
+            Modelo a ser utilizado (ver MODELOS_DISPONIVEIS).
+        temperatura : float
+            Temperatura de amostragem (0.0 a 2.0). Valores baixos = mais determinístico.
+        max_tokens : int
+            Número máximo de tokens na resposta.
+        endpoint : str
+            Endpoint da API ('dashscope' ou 'openai').
+        timeout : int
+            Timeout em segundos para requisições.
+        max_retries : int
+            Número máximo de tentativas em caso de falha.
         """
-        self.api_key = api_key or os.getenv("QWEN_API_KEY")
-        self.model = model
-        self.offline_mode = offline_mode
-        
-        if not self.api_key and not offline_mode:
-            logger.warning(
-                "QWEN_API_KEY não configurada. Usando modo offline.\n"
-                "Para habilitar API: export QWEN_API_KEY='sua-chave'"
+        # Verificar dependências
+        if not HAS_OPENAI and not HAS_REQUESTS:
+            raise ImportError(
+                "É necessário instalar 'openai' ou 'requests':\n"
+                "  pip install openai\n"
+                "  # ou\n"
+                "  pip install requests"
             )
-            self.offline_mode = True
         
-        if model not in self.SUPPORTED_MODELS:
-            logger.warning(f"Modelo '{model}' desconhecido. Usando 'qwen-plus'.")
-            self.model = "qwen-plus"
+        # API Key
+        self.api_key = api_key or os.getenv('QWEN_API_KEY')
+        if not self.api_key:
+            raise ValueError(
+                "API Key não fornecida. Defina a variável de ambiente "
+                "QWEN_API_KEY ou passe api_key no construtor."
+            )
         
-        # Configura cache
-        self.cache_dir = cache_dir or Path.home() / ".fen-trans" / "qwen_cache"
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
+        # Modelo
+        if modelo not in MODELOS_DISPONIVEIS:
+            logger.warning(
+                f"Modelo '{modelo}' não reconhecido. "
+                f"Usando '{modelo}' mesmo assim."
+            )
+        self.modelo = modelo
         
-        # Carrega contextos dos capítulos
-        self.chapter_contexts = self._load_chapter_contexts()
+        # Parâmetros
+        self.temperatura = temperatura
+        self.max_tokens = max_tokens
+        self.timeout = timeout
+        self.max_retries = max_retries
         
-        logger.info(f"QwenClient inicializado | Modelo: {model} | Offline: {offline_mode}")
+        # Endpoint
+        self.base_url = ENDPOINTS.get(endpoint, endpoint)
+        
+        # Histórico de conversa
+        self.historico: List[Mensagem] = []
+        
+        # Carregar templates
+        self.templates = self._carregar_templates()
+        
+        logger.info(f"QwenClient inicializado com modelo '{modelo}'")
     
-    def _load_chapter_contexts(self) -> Dict[str, ChapterContext]:
-        """Carrega metadados dos capítulos para contextualização."""
-        # Em produção, isso viria de um arquivo JSON/YAML
-        # Aqui usamos exemplos mínimos
-        return {
-            "cap4": ChapterContext(
-                chapter_id="cap4",
-                title="Escoamento em Tubulações e Bombeamento",
-                volume=1,
-                key_concepts=[
-                    "Equação de Bernoulli", "Perda de carga", 
-                    "Fator de atrito", "Colebrook-White", "Bombas"
-                ],
-                equations={
-                    "Bernoulli": "p1/γ + z1 + V1²/2g = p2/γ + z2 + V2²/2g",
-                    "Darcy-Weisbach": "hf = f·(L/D)·(V²/2g)",
-                    "Colebrook-White": "1/√f = -2·log10(ε/(3.7D) + 2.51/(Re·√f))"
-                },
-                examples=[
-                    {
-                        "id": "ex4.1",
-                        "title": "Sistema de Bombeamento Residencial",
-                        "level": "graduation",
-                        "description": "Dimensionamento de bomba para prédio de 12 pavimentos"
-                    }
-                ]
-            ),
-            # ... adicionar outros capítulos conforme necessário
-        }
+    # ------------------------------------------------------------------------
+    # MÉTODOS PRIVADOS
+    # ------------------------------------------------------------------------
     
-    def _build_prompt(
-        self,
-        chapter: str,
-        topic: str,
-        level: str = "graduation",
-        question: str = "",
-        template: str = "explicacao"
-    ) -> str:
-        """Constrói prompt estruturado para a IA."""
-        ctx = self.chapter_contexts.get(chapter)
-        
-        templates = {
-            "explicacao": f"""
-Você é um professor especialista em Fenômenos de Transporte.
-
-{ctx.to_prompt_snippet() if ctx else ""}
-
-**Tópico da consulta**: {topic}
-**Nível do aluno**: {level}
-**Pergunta**: {question}
-
-Instruções:
-1. Responda em português do Brasil, claro e didático
-2. Use notação matemática em LaTeX entre $...$ para equações
-3. Para nível 'graduation': foco em conceitos e aplicações práticas
-4. Para nível 'postgrad': inclua derivações, análise dimensional, limitações
-5. Se houver equações relevantes, mostre a forma final e explique cada termo
-6. Termine com uma dica prática ou pergunta reflexiva
-
-Resposta:
-""",
-            "exercicio": f"""
-Você é um tutor de Fenômenos de Transporte.
-
-{ctx.to_prompt_snippet() if ctx else ""}
-
-**Exercício**: {question}
-**Capítulo**: {chapter}
-**Nível**: {level}
-
-Instruções:
-1. Resolva passo a passo, mostrando o raciocínio
-2. Destaque hipóteses e aproximações utilizadas
-3. Verifique consistência dimensional em cada passo
-4. Interprete fisicamente o resultado final
-5. Sugira uma variação do exercício para aprofundamento
-
-Solução:
-""",
-            "codigo": f"""
-Você é um desenvolvedor científico especializado em Python para Engenharia.
-
-{ctx.to_prompt_snippet() if ctx else ""}
-
-**Tarefa**: {question}
-**Contexto**: {topic}
-**Nível**: {level}
-
-Instruções:
-1. Forneça código Python limpo, com docstrings e type hints
-2. Use numpy/scipy para cálculos, matplotlib para plots
-3. Inclua comentários explicando a física por trás do código
-4. Adicione um bloco de teste mínimo ao final
-5. Se aplicável, mostre como validar com solução analítica
-
-Código:
-"""
-        }
-        
-        return templates.get(template, templates["explicacao"]).strip()
-    
-    def _get_cache_key(self, prompt: str) -> str:
-        """Gera chave única para cache baseada no prompt."""
-        import hashlib
-        return hashlib.md5(prompt.encode()).hexdigest()[:16]
-    
-    def _load_from_cache(self, key: str) -> Optional[str]:
-        """Tenta carregar resposta do cache."""
-        cache_file = self.cache_dir / f"{key}.json"
-        if cache_file.exists():
-            try:
-                with open(cache_file, 'r', encoding='utf-8') as f:
-                    data = json.load(f)
-                    # Verifica se cache não expirou (24h)
-                    if (datetime.now().timestamp() - data['timestamp']) < 86400:
-                        logger.info(f"✓ Cache hit: {key}")
-                        return data['response']
-            except Exception as e:
-                logger.warning(f"Erro ao ler cache: {e}")
-        return None
-    
-    def _save_to_cache(self, key: str, response: str):
-        """Salva resposta no cache."""
-        cache_file = self.cache_dir / f"{key}.json"
-        try:
-            with open(cache_file, 'w', encoding='utf-8') as f:
-                json.dump({
-                    'timestamp': datetime.now().timestamp(),
-                    'response': response,
-                    'model': self.model
-                }, f, ensure_ascii=False, indent=2)
-        except Exception as e:
-            logger.warning(f"Erro ao salvar cache: {e}")
-    
-    def _offline_response(self, prompt: str) -> str:
-        """Resposta fallback quando offline ou sem API key."""
-        return f"""
-⚠️ **Modo Offline Ativado**
-
-Para obter respostas da IA Qwen:
-1. Cadastre-se em https://dashscope.aliyun.com/
-2. Obtenha sua API Key
-3. Execute: `export QWEN_API_KEY="sua-chave"`
-
-**Enquanto isso, aqui está um resumo do tópico**:
-
-> *Consulte o capítulo correspondente no livro para:
-> - Desenvolvimento teórico completo
-> - Exemplos resolvidos passo a passo  
-> - Códigos Python nos notebooks associados
-> - Exercícios graduados por nível*
-
-📚 **Recursos disponíveis localmente**:
-- Notebook: `notebooks/{prompt.split('**Capítulo**:')[1].strip().split()[0] if '**Capítulo**:' in prompt else '00_setup_check.ipynb'}`
-- Dados: `data/` pasta do repositório
-- LaTeX: `latex/` para compilação do PDF
-
-💡 **Dica**: Use `jupyter lab notebooks/` para explorar os exemplos interativos!
-"""
-    
-    def ask(
-        self,
-        chapter: str,
-        topic: str,
-        question: str = "",
-        level: str = "graduation",
-        template: str = "explicacao",
-        use_cache: bool = True
-    ) -> str:
-        """
-        Envia pergunta contextualizada à IA Qwen.
-        
-        Args:
-            chapter: ID do capítulo (ex: 'cap4')
-            topic: Tópico específico dentro do capítulo
-            question: Pergunta do usuário (opcional, usa topic se vazio)
-            level: 'graduation' ou 'postgrad'
-            template: Tipo de prompt ('explicacao', 'exercicio', 'codigo')
-            use_cache: Se True, tenta usar cache antes de chamar API
-            
-        Returns:
-            Resposta formatada em Markdown
-        """
-        question = question or f"Explique: {topic}"
-        prompt = self._build_prompt(chapter, topic, level, question, template)
-        
-        # Tenta cache primeiro
-        if use_cache:
-            cache_key = self._get_cache_key(prompt)
-            cached = self._load_from_cache(cache_key)
-            if cached:
-                return cached
-        
-        # Modo offline ou sem API key
-        if self.offline_mode or not self.api_key:
-            response = self._offline_response(prompt)
-        elif not DASHSCOPE_AVAILABLE:
-            response = "❌ Pacote `dashscope` não instalado. Execute: `pip install dashscope`"
+    def _carregar_templates(self) -> Dict[str, str]:
+        """Carrega os templates de prompt do diretório."""
+        templates = {}
+        if TEMPLATES_DIR.exists():
+            for arquivo in TEMPLATES_DIR.glob('*.txt'):
+                try:
+                    templates[arquivo.stem] = arquivo.read_text(encoding='utf-8')
+                except Exception as e:
+                    logger.warning(f"Erro ao carregar template {arquivo}: {e}")
         else:
+            logger.warning(f"Diretório de templates não encontrado: {TEMPLATES_DIR}")
+        return templates
+    
+    def _fazer_requisicao(self, mensagens: List[Dict]) -> Dict:
+        """
+        Faz a requisição à API com tratamento de retries.
+        
+        Parâmetros
+        ----------
+        mensagens : list
+            Lista de mensagens no formato OpenAI.
+        
+        Retorna
+        -------
+        dict
+            Resposta bruta da API.
+        """
+        if HAS_OPENAI:
+            return self._requisicao_openai(mensagens)
+        else:
+            return self._requisicao_requests(mensagens)
+    
+    def _requisicao_openai(self, mensagens: List[Dict]) -> Dict:
+        """Requisição usando a biblioteca openai."""
+        client = openai.OpenAI(
+            api_key=self.api_key,
+            base_url=self.base_url,
+            timeout=self.timeout
+        )
+        
+        for tentativa in range(self.max_retries):
             try:
-                # Chama API Qwen
-                response_obj: GenerationResponse = Generation.call(
-                    model=self.model,
-                    prompt=prompt,
-                    api_key=self.api_key,
-                    result_format='message'
+                resposta = client.chat.completions.create(
+                    model=self.modelo,
+                    messages=mensagens,
+                    temperature=self.temperatura,
+                    max_tokens=self.max_tokens
                 )
-                
-                if response_obj.status_code == 200:
-                    response = response_obj.output.choices[0].message.content
-                else:
-                    logger.error(f"Erro API: {response_obj.status_code} - {response_obj.message}")
-                    response = f"❌ Erro na API Qwen: {response_obj.message}"
-                    
+                return {
+                    'content': resposta.choices[0].message.content,
+                    'usage': {
+                        'prompt_tokens': resposta.usage.prompt_tokens,
+                        'completion_tokens': resposta.usage.completion_tokens,
+                        'total_tokens': resposta.usage.total_tokens,
+                    },
+                    'finish_reason': resposta.choices[0].finish_reason,
+                    'model': resposta.model
+                }
             except Exception as e:
-                logger.error(f"Exceção ao chamar API: {e}")
-                response = f"⚠️ Erro de conexão: {str(e)}\n\n" + self._offline_response(prompt)
+                logger.warning(f"Tentativa {tentativa + 1} falhou: {e}")
+                if tentativa < self.max_retries - 1:
+                    time.sleep(2 ** tentativa)  # Backoff exponencial
+                else:
+                    raise
+    
+    def _requisicao_requests(self, mensagens: List[Dict]) -> Dict:
+        """Requisição usando a biblioteca requests."""
+        headers = {
+            'Authorization': f'Bearer {self.api_key}',
+            'Content-Type': 'application/json'
+        }
         
-        # Salva no cache se sucesso
-        if use_cache and "❌" not in response and "⚠️" not in response:
-            self._save_to_cache(cache_key, response)
+        payload = {
+            'model': self.modelo,
+            'messages': mensagens,
+            'temperature': self.temperatura,
+            'max_tokens': self.max_tokens
+        }
         
-        return response
+        for tentativa in range(self.max_retries):
+            try:
+                response = requests.post(
+                    f'{self.base_url}/chat/completions',
+                    headers=headers,
+                    json=payload,
+                    timeout=self.timeout
+                )
+                response.raise_for_status()
+                data = response.json()
+                
+                return {
+                    'content': data['choices'][0]['message']['content'],
+                    'usage': data.get('usage', {}),
+                    'finish_reason': data['choices'][0].get('finish_reason', 'stop'),
+                    'model': data.get('model', self.modelo)
+                }
+            except Exception as e:
+                logger.warning(f"Tentativa {tentativa + 1} falhou: {e}")
+                if tentativa < self.max_retries - 1:
+                    time.sleep(2 ** tentativa)
+                else:
+                    raise
     
-    def solve_exercise(
+    def _montar_mensagens(
         self,
-        chapter: str,
-        exercise_id: Union[str, int],
-        show_steps: bool = True,
-        **kwargs
-    ) -> str:
-        """Método conveniente para resolver exercícios."""
-        return self.ask(
-            chapter=chapter,
-            topic=f"Exercício {exercise_id}",
-            template="exercicio",
-            level=kwargs.get('level', 'graduation'),
-            use_cache=kwargs.get('use_cache', True),
-            question=kwargs.get('question', f"Resolva o exercício {exercise_id} do capítulo {chapter}")
-        )
+        prompt_usuario: str,
+        system_prompt: Optional[str] = None
+    ) -> List[Dict]:
+        """Monta a lista de mensagens para a API."""
+        mensagens = []
+        
+        if system_prompt:
+            mensagens.append({'role': 'system', 'content': system_prompt})
+        
+        mensagens.append({'role': 'user', 'content': prompt_usuario})
+        
+        return mensagens
     
-    def generate_code(
+    # ------------------------------------------------------------------------
+    # MÉTODOS PÚBLICOS — INTERFACE BÁSICA
+    # ------------------------------------------------------------------------
+    
+    def perguntar(
         self,
-        chapter: str,
-        task: str,
-        language: str = "python",
-        **kwargs
-    ) -> str:
-        """Método conveniente para gerar código."""
-        return self.ask(
-            chapter=chapter,
-            topic=f"Código: {task}",
-            template="codigo",
-            level=kwargs.get('level', 'postgrad'),
-            question=f"Escreva código em {language} para: {task}",
-            use_cache=kwargs.get('use_cache', True)
+        pergunta: str,
+        system_prompt: Optional[str] = None,
+        salvar_historico: bool = True
+    ) -> RespostaQwen:
+        """
+        Faz uma pergunta simples ao Qwen.
+        
+        Parâmetros
+        ----------
+        pergunta : str
+            Pergunta do usuário.
+        system_prompt : str, opcional
+            Instrução de sistema (comportamento do modelo).
+        salvar_historico : bool
+            Se True, salva a interação no histórico.
+        
+        Retorna
+        -------
+        RespostaQwen
+            Objeto com a resposta completa.
+        """
+        inicio = time.time()
+        
+        mensagens = self._montar_mensagens(pergunta, system_prompt)
+        resposta_raw = self._fazer_requisicao(mensagens)
+        
+        tempo = time.time() - inicio
+        
+        resposta = RespostaQwen(
+            content=resposta_raw['content'],
+            modelo=resposta_raw.get('model', self.modelo),
+            tokens_usados=resposta_raw.get('usage', {}),
+            tempo_resposta=tempo,
+            finish_reason=resposta_raw.get('finish_reason', 'stop'),
+            raw_response=resposta_raw
         )
+        
+        if salvar_historico:
+            self.historico.append(Mensagem(role='user', content=pergunta))
+            self.historico.append(Mensagem(role='assistant', content=resposta.content))
+        
+        return resposta
     
-    def clear_cache(self, chapter: Optional[str] = None):
-        """Limpa cache de respostas."""
-        if chapter:
-            # Limpa apenas de um capítulo (heurística simples)
-            for f in self.cache_dir.glob("*.json"):
-                if chapter in f.name:
-                    f.unlink()
-                    logger.info(f"Cache removido: {f.name}")
-        else:
-            # Limpa tudo
-            for f in self.cache_dir.glob("*.json"):
-                f.unlink()
-            logger.info(f"Cache limpo: {self.cache_dir}")
+    def conversar(self, mensagem: str) -> RespostaQwen:
+        """
+        Continua uma conversa, mantendo o contexto.
+        
+        Parâmetros
+        ----------
+        mensagem : str
+            Nova mensagem do usuário.
+        
+        Retorna
+        -------
+        RespostaQwen
+            Resposta considerando o histórico.
+        """
+        inicio = time.time()
+        
+        # Converter histórico para formato da API
+        mensagens_api = [m.to_dict() for m in self.historico]
+        mensagens_api.append({'role': 'user', 'content': mensagem})
+        
+        resposta_raw = self._fazer_requisicao(mensagens_api)
+        
+        tempo = time.time() - inicio
+        
+        resposta = RespostaQwen(
+            content=resposta_raw['content'],
+            modelo=resposta_raw.get('model', self.modelo),
+            tokens_usados=resposta_raw.get('usage', {}),
+            tempo_resposta=tempo,
+            finish_reason=resposta_raw.get('finish_reason', 'stop'),
+            raw_response=resposta_raw
+        )
+        
+        # Atualizar histórico
+        self.historico.append(Mensagem(role='user', content=mensagem))
+        self.historico.append(Mensagem(role='assistant', content=resposta.content))
+        
+        return resposta
+    
+    def limpar_historico(self):
+        """Limpa o histórico de conversa."""
+        self.historico = []
+        logger.info("Histórico de conversa limpo")
+    
+    # ------------------------------------------------------------------------
+    # MÉTODOS PÚBLICOS — APLICAÇÕES PEDAGÓGICAS
+    # ------------------------------------------------------------------------
+    
+    def explicar_conceito(
+        self,
+        conceito: str,
+        capitulo: Optional[int] = None,
+        nivel: str = 'graduacao',
+        incluir_exemplo: bool = True
+    ) -> RespostaQwen:
+        """
+        Explica um conceito do livro de forma didática.
+        
+        Parâmetros
+        ----------
+        conceito : str
+            Conceito a ser explicado (ex: "Número de Reynolds").
+        capitulo : int, opcional
+            Capítulo do livro relacionado.
+        nivel : str
+            Nível didático ('graduacao' ou 'pos-graduacao').
+        incluir_exemplo : bool
+            Se True, inclui exemplo numérico.
+        
+        Retorna
+        -------
+        RespostaQwen
+            Explicação formatada.
+        """
+        template = self.templates.get('explicacao_conceito', '')
+        
+        prompt = template.format(
+            conceito=conceito,
+            capitulo=capitulo or 'não especificado',
+            nivel=nivel,
+            incluir_exemplo='Sim' if incluir_exemplo else 'Não'
+        )
+        
+        system_prompt = (
+            "Você é um professor especialista em Fenômenos de Transporte, "
+            "didático e rigoroso. Baseie suas explicações no livro "
+            "'Fenômenos de Transporte: Fundamentos e Modelagem Computacional' "
+            "de Jader Lugon Junior."
+        )
+        
+        return self.perguntar(prompt, system_prompt=system_prompt)
+    
+    def resolver_exercicio(
+        self,
+        enunciado: str,
+        capitulo: Optional[int] = None,
+        mostrar_passos: bool = True,
+        auditoria_ia: bool = True
+    ) -> RespostaQwen:
+        """
+        Resolve um exercício passo a passo.
+        
+        Parâmetros
+        ----------
+        enunciado : str
+            Enunciado do exercício.
+        capitulo : int, opcional
+            Capítulo do livro relacionado.
+        mostrar_passos : bool
+            Se True, mostra todos os passos da solução.
+        auditoria_ia : bool
+            Se True, inclui seção de auditoria crítica (V&V).
+        
+        Retorna
+        -------
+        RespostaQwen
+            Solução detalhada.
+        """
+        template = self.templates.get('resolucao_exercicio', '')
+        
+        prompt = template.format(
+            enunciado=enunciado,
+            capitulo=capitulo or 'não especificado',
+            mostrar_passos='Sim' if mostrar_passos else 'Não',
+            auditoria_ia='Sim' if auditoria_ia else 'Não'
+        )
+        
+        system_prompt = (
+            "Você é um professor especialista em Fenômenos de Transporte. "
+            "Ao resolver exercícios:\n"
+            "1. Apresente a solução passo a passo\n"
+            "2. Verifique consistência dimensional\n"
+            "3. Interprete fisicamente o resultado\n"
+            "4. Discuta limitações e hipóteses assumidas"
+        )
+        
+        return self.perguntar(prompt, system_prompt=system_prompt)
+    
+    def gerar_codigo(
+        self,
+        descricao: str,
+        linguagem: str = 'python',
+        capitulo: Optional[int] = None,
+        incluir_testes: bool = True,
+        incluir_docstrings: bool = True
+    ) -> RespostaQwen:
+        """
+        Gera código Python para resolver um problema de Fenômenos de Transporte.
+        
+        Parâmetros
+        ----------
+        descricao : str
+            Descrição do problema a ser resolvido.
+        linguagem : str
+            Linguagem de programação (padrão: 'python').
+        capitulo : int, opcional
+            Capítulo do livro relacionado.
+        incluir_testes : bool
+            Se True, inclui testes unitários.
+        incluir_docstrings : bool
+            Se True, inclui docstrings no estilo NumPy.
+        
+        Retorna
+        -------
+        RespostaQwen
+            Código comentado.
+        """
+        template = self.templates.get('geracao_codigo', '')
+        
+        prompt = template.format(
+            descricao=descricao,
+            linguagem=linguagem,
+            capitulo=capitulo or 'não especificado',
+            incluir_testes='Sim' if incluir_testes else 'Não',
+            incluir_docstrings='Sim' if incluir_docstrings else 'Não'
+        )
+        
+        system_prompt = (
+            "Você é um engenheiro especialista em computação científica. "
+            "Gere código limpo, eficiente e bem documentado, seguindo PEP 8. "
+            "Use bibliotecas científicas padrão (numpy, scipy, matplotlib)."
+        )
+        
+        return self.perguntar(prompt, system_prompt=system_prompt)
+    
+    # ------------------------------------------------------------------------
+    # MÉTODOS UTILITÁRIOS
+    # ------------------------------------------------------------------------
+    
+    def salvar_historico(self, arquivo: Union[str, Path]):
+        """Salva o histórico de conversa em arquivo JSON."""
+        dados = [
+            {
+                'role': m.role,
+                'content': m.content,
+                'timestamp': m.timestamp
+            }
+            for m in self.historico
+        ]
+        
+        with open(arquivo, 'w', encoding='utf-8') as f:
+            json.dump(dados, f, ensure_ascii=False, indent=2)
+        
+        logger.info(f"Histórico salvo em {arquivo}")
+    
+    def carregar_historico(self, arquivo: Union[str, Path]):
+        """Carrega histórico de conversa de arquivo JSON."""
+        with open(arquivo, 'r', encoding='utf-8') as f:
+            dados = json.load(f)
+        
+        self.historico = [
+            Mensagem(
+                role=d['role'],
+                content=d['content'],
+                timestamp=d.get('timestamp', time.time())
+            )
+            for d in dados
+        ]
+        
+        logger.info(f"Histórico carregado de {arquivo} ({len(self.historico)} mensagens)")
+    
+    def __repr__(self) -> str:
+        return (
+            f"QwenClient(modelo='{self.modelo}', "
+            f"temperatura={self.temperatura}, "
+            f"historico={len(self.historico)} mensagens)"
+        )
 
 
-# Função de conveniência para uso rápido
-def ask_qwen(
-    chapter: str,
-    topic: str,
-    question: str = "",
+# ============================================================================
+# FUNÇÃO AUXILIAR: INSTÂNCIA PADRÃO
+# ============================================================================
+
+_client_default: Optional[QwenClient] = None
+
+
+def get_client(**kwargs) -> QwenClient:
+    """
+    Retorna uma instância padrão do QwenClient (singleton).
+    
+    Parâmetros
+    ----------
     **kwargs
-) -> str:
-    """Função rápida para perguntas sem instanciar cliente."""
-    client = QwenClient()
-    return client.ask(chapter, topic, question, **kwargs)
+        Argumentos passados ao construtor de QwenClient.
+    
+    Retorna
+    -------
+    QwenClient
+        Instância do cliente.
+    """
+    global _client_default
+    if _client_default is None:
+        _client_default = QwenClient(**kwargs)
+    return _client_default
 
 
-if __name__ == "__main__":
-    # Exemplo de uso direto
-    import sys
-    
-    if len(sys.argv) < 3:
-        print("Uso: python qwen_client.py <capítulo> <tópico> [pergunta]")
-        print("Ex: python qwen_client.py cap4 'Colebrook-White' 'Como resolver iterativamente?'")
-        sys.exit(1)
-    
-    chap = sys.argv[1]
-    topic = sys.argv[2]
-    question = sys.argv[3] if len(sys.argv) > 3 else ""
-    
-    client = QwenClient()
-    resposta = client.ask(chap, topic, question)
-    print("\n" + "="*60)
-    print(resposta)
-    print("="*60)
+# ============================================================================
+# EXECUÇÃO COMO SCRIPT (TESTES)
+# ============================================================================
+
+if __name__ == '__main__':
+    # Teste básico (requer QWEN_API_KEY definida)
+    try:
+        client = QwenClient()
+        print(f"Cliente inicializado: {client}")
+        
+        # Teste simples
+        resposta = client.perguntar("O que é a Lei de Fourier? Responda em uma frase.")
+        print(f"\nResposta: {resposta}")
+        print(f"Tokens usados: {resposta.tokens_usados}")
+        print(f"Tempo: {resposta.tempo_resposta:.2f}s")
+        
+    except ValueError as e:
+        print(f"⚠️  {e}")
+        print("\nPara testar, defina a variável de ambiente:")
+        print("  export QWEN_API_KEY='sua-chave-aqui'")
+    except ImportError as e:
+        print(f"⚠️  {e}")

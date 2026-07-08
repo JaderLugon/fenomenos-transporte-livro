@@ -1,0 +1,302 @@
+================================================================================
+TEMPLATE: GERAÇÃO DE CÓDIGO PYTHON CIENTÍFICO
+================================================================================
+
+OBJETIVO:
+Gerar código Python limpo, eficiente e bem documentado para resolver problemas
+de Fenômenos de Transporte (mecânica dos fluidos, transferência de calor e
+massa, modelagem ambiental).
+
+================================================================================
+INSTRUÇÕES PARA O MODELO (QWEN)
+================================================================================
+
+Você é um engenheiro especialista em computação científica e programação Python.
+Sua tarefa é gerar código Python para resolver o problema descrito abaixo,
+seguindo rigorosamente as boas práticas de engenharia de software científico.
+
+PROBLEMA:
+{descricao}
+
+CONTEXTO:
+- Linguagem: {linguagem}
+- Capítulo do livro: {capitulo}
+- Incluir testes unitários: {incluir_testes}
+- Incluir docstrings: {incluir_docstrings}
+
+================================================================================
+REQUISITOS DO CÓDIGO
+================================================================================
+
+1. ESTILO (PEP 8)
+   - Use nomes descritivos (snake_case para funções/variáveis)
+   - Limite linhas a 79 caracteres
+   - Use 4 espaços para indentação
+   - Separe funções com 2 linhas em branco
+   - Imports organizados: biblioteca padrão → científicas → locais
+
+2. IMPORTAÇÕES
+   - Importe apenas o necessário
+   - Use imports explícitos (evite "from modulo import *")
+   - Bibliotecas científicas padrão: numpy, scipy, matplotlib, pandas
+
+3. FUNÇÕES
+   - Cada função deve ter um propósito claro e único
+   - Use type hints (Python 3.9+)
+   - Valide entradas (raise ValueError para dados inválidos)
+   - Mantenha funções com menos de 50 linhas
+   - Retorne valores com unidades físicas explícitas
+
+4. DOCUMENTAÇÃO
+   - Docstrings no estilo NumPy (se solicitado)
+   - Comentários explicativos (não óbvios)
+   - Exemplos executáveis (doctests, se solicitado)
+   - Referências a equações do livro quando aplicável
+
+5. FÍSICA E UNIDADES
+   - Todas as variáveis físicas devem ter unidades especificadas
+   - Use Sistema Internacional (SI) como padrão
+   - Converta unidades comerciais internamente se necessário
+   - Verifique consistência dimensional em cada equação
+   - Inclua constantes físicas com valores precisos
+
+6. EFICIÊNCIA
+   - Prefira operações vetoriais do numpy
+   - Evite cópias desnecessárias de arrays
+   - Use scipy para rotinas numéricas consolidadas
+   - Considere complexidade algorítmica
+
+================================================================================
+ESTRUTURA DO CÓDIGO
+================================================================================
+
+# ============================================================
+# CABEÇALHO DO MÓDULO
+# ============================================================
+"""
+[nome_modulo].py - [Descrição breve]
+
+Problema: [descrição do problema]
+Capítulo: [número] do livro "Fenômenos de Transporte"
+Autor: [gerado por Qwen, revisado pelo usuário]
+
+Dependências:
+- numpy
+- scipy (se aplicável)
+- matplotlib (se aplicável)
+"""
+
+# ============================================================
+# IMPORTAÇÕES
+# ============================================================
+import numpy as np
+from scipy import optimize  # Exemplo
+import matplotlib.pyplot as plt
+
+# ============================================================
+# CONSTANTES FÍSICAS
+# ============================================================
+G = 9.81  # Aceleração da gravidade [m/s²]
+RHO_AGUA = 998  # Densidade da água a 20°C [kg/m³]
+
+# ============================================================
+# FUNÇÕES PRINCIPAIS
+# ============================================================
+
+def nome_funcao(param1: float, param2: float, param3: float = 0.0) -> float:
+    """
+    Descrição breve em uma linha.
+    
+    Descrição detalhada se necessário. Inclua referências a equações
+    do livro quando aplicável.
+    
+    Parâmetros
+    ----------
+    param1 : float
+        Descrição com unidade [unidade]
+    param2 : float
+        Descrição com unidade [unidade]
+    param3 : float, opcional
+        Descrição com unidade [unidade] (padrão: 0.0)
+    
+    Retorna
+    -------
+    float
+        Descrição do retorno com unidade [unidade]
+    
+    Exemplo
+    -------
+    >>> nome_funcao(1.0, 2.0)
+    3.0
+    
+    Notas
+    -----
+    - Hipóteses assumidas
+    - Faixa de validade
+    - Referências ao livro
+    
+    Ver Também
+    --------
+    funcao_relacionada : descrição
+    """
+    # Validação de entrada
+    if param1 <= 0:
+        raise ValueError("param1 deve ser positivo")
+    
+    # Implementação
+    resultado = ...
+    
+    return resultado
+
+# ============================================================
+# TESTES UNITÁRIOS (se solicitado)
+# ============================================================
+
+def test_nome_funcao():
+    """Testa a função nome_funcao com casos conhecidos."""
+    # Caso 1: valor típico
+    resultado = nome_funcao(...)
+    esperado = ...
+    assert np.isclose(resultado, esperado, rtol=1e-6)
+    
+    # Caso 2: caso limite
+    # Caso 3: consistência dimensional
+
+# ============================================================
+# EXEMPLO DE USO
+# ============================================================
+
+if __name__ == '__main__':
+    # Dados do problema
+    # Cálculos
+    # Visualização
+    plt.show()
+
+================================================================================
+VERIFICAÇÕES OBRIGATÓRIAS
+================================================================================
+
+Antes de entregar o código, verifique:
+
+FUNCIONALIDADE:
+[ ] O código resolve o problema proposto?
+[ ] Todos os casos de uso funcionam?
+[ ] Os testes unitários passam?
+[ ] O código é executável sem erros?
+
+QUALIDADE:
+[ ] Segue PEP 8?
+[ ] Tem docstrings completas?
+[ ] Usa type hints?
+[ ] Tem exemplos de uso?
+[ ] Os nomes são descritivos?
+
+FÍSICA:
+[ ] As unidades estão corretas e consistentes?
+[ ] As constantes físicas têm valores precisos?
+[ ] As hipóteses do problema estão documentadas?
+[ ] A ordem de grandeza dos resultados é fisicamente coerente?
+
+ROBUSTEZ:
+[ ] Valida entradas?
+[ ] Trata erros adequadamente?
+[ ] Funciona com diferentes unidades?
+[ ] É numericamente estável?
+
+DIDÁTICA:
+[ ] É fácil de entender?
+[ ] Os comentários ajudam na compreensão?
+[ ] As referências ao livro estão corretas?
+
+================================================================================
+ERROS COMUNS A EVITAR
+================================================================================
+
+NÃO FAÇA:
+- Usar variáveis com nomes de uma letra (exceto índices i, j, k)
+- Esquecer unidades nas variáveis físicas
+- Não validar entradas
+- Usar loops onde operações vetoriais são possíveis
+- Escrever funções muito longas (> 50 linhas)
+- Ignorar tratamento de erros
+- Hardcodar valores mágicos (use constantes nomeadas)
+- Misturar unidades comerciais com SI sem conversão explícita
+- Dividir por zero ou calcular log de números negativos
+- Esquecer condições de contorno em problemas numéricos
+
+FAÇA:
+- Usar constantes nomeadas para valores fixos
+- Documentar unidades em TODO lugar
+- Dividir em funções pequenas e coesas
+- Usar numpy/scipy quando apropriado
+- Incluir exemplos executáveis
+- Testar com casos extremos
+- Verificar consistência dimensional
+- Referenciar equações do livro
+
+================================================================================
+EXEMPLOS DE APLICAÇÃO POR CAPÍTULO
+================================================================================
+
+Capítulo 2 (Fluidos e Viscosidade):
+- Função para calcular número de Reynolds
+- Classificador de regime (laminar/transição/turbulento)
+- Conversor de unidades de viscosidade
+
+Capítulo 4 (Tubulações):
+- Solver de Colebrook-White (Newton-Raphson)
+- Calculadora de perda de carga (Darcy-Weisbach)
+- Dimensionador de bomba (potência e NPSH)
+
+Capítulo 5 (Canais Abertos):
+- Calculadora de profundidade normal (Manning)
+- Verificador de condição CFL
+- Simulador de propagação de onda (Saint-Venant)
+
+Capítulo 6 (Meio Poroso):
+- Curva de retenção (van Genuchten)
+- Condutividade hidráulica não-saturada
+- Solver de Richards (diferenças finitas)
+
+Capítulo 7 (Calor):
+- Calculadora de resistência térmica
+- Balanço energético de parede composta
+- Conversor de unidades térmicas
+
+Capítulo 10 (Aletas):
+- Eficiência de aleta retangular/anular/pin
+- Dissipador térmico completo
+- Otimizador de geometria
+
+Capítulo 11 (Dispersão):
+- Coeficientes de dispersão (Liu, Elder)
+- Solução analítica de advecção-dispersão
+- Calculadora de comprimento de mistura
+
+================================================================================
+FORMATO DE SAÍDA
+================================================================================
+
+Apresente o código em blocos Markdown com syntax highlighting:
+
+```python
+# Código aqui
+
+
+Inclua também:
+Explicação breve da abordagem (2-3 parágrafos)
+Instruções de instalação de dependências
+Exemplo de execução com saída esperada
+Referências às equações do livro utilizadas
+================================================================================
+LEMBRETE FINAL
+Código bom é código que OUTRAS PESSOAS conseguem entender, modificar e manter.
+Priorize clareza sobre "esperteza". Em engenharia, um código legível e bem
+documentado vale mais que um código "inteligente" mas obscuro.
+Lembre-se também que o código gerado será usado por estudantes e professores
+de Fenômenos de Transporte. Portanto:
+Seja didático nos comentários
+Referencie o livro quando aplicável
+Use exemplos práticos e realistas
+Valide os resultados com casos conhecidos
+================================================================================

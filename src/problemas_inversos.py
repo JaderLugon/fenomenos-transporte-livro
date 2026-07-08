@@ -1,37 +1,189 @@
 """
-Módulo: Problemas Inversos e Calibração
-Referência: Apêndice / Cap. 6 (Vol II)
+problemas_inversos.py — Estimação de parâmetros via problemas inversos.
+
+Implementa:
+- Levenberg-Marquardt (LM)
+- Matriz de covariância e intervalos de confiança
+- Sensibilidades por diferenças finitas
 """
+
 import numpy as np
-from scipy.optimize import least_squares
+from .utils import validar_positivo
 
-def levenberg_marquardt(residual_func, p0, args=(), bounds=(-np.inf, np.inf), max_nfev=500):
-    result = least_squares(residual_func, p0, args=args, bounds=bounds,
-                          method='trf', xtol=1e-8, ftol=1e-8, max_nfev=max_nfev)
-    J = result.jac
-    n_params = len(result.x)
-    n_obs = len(result.fun)
-    sigma2 = np.sum(result.fun**2) / max(n_obs - n_params, 1)
-    cov = sigma2 * np.linalg.inv(J.T @ J + 1e-10*np.eye(n_params))
-    std = np.sqrt(np.diag(cov))
-    corr = cov[0,1] / np.sqrt(cov[0,0]*cov[1,1]) if n_params >= 2 else 0.0
-    return result.x, std, corr, result.cost*2, result.success
+# ============================================================================
+# LEVENBERG-MARQUARDT
+# ============================================================================
 
-def sensitivity_fd(model_func, p, x_obs, delta=1e-5):
-    """Jacobian por diferenças finitas."""
-    n_p = len(p)
-    n_obs = len(x_obs)
-    J = np.zeros((n_obs, n_p))
-    for j in range(n_p):
-        p_plus = p.copy()
-        p_plus[j] += delta
-        J[:, j] = (model_func(p_plus, x_obs) - model_func(p, x_obs)) / delta
+def levenberg_marquardt(modelo, P0: np.ndarray, y_obs: np.ndarray,
+                        x_data: np.ndarray = None,
+                        max_iter: int = 100,
+                        tol: float = 1e-8,
+                        mu0: float = 1e-3,
+                        delta_P: float = 0.01,
+                        verbose: bool = False) -> dict:
+    """
+    Método de Levenberg-Marquardt para estimação de parâmetros.
+    
+    Parâmetros
+    ----------
+    modelo : callable
+        Função que recebe (P, x_data) e retorna y_calc.
+        Assinatura: y_calc = modelo(P, x_data)
+    P0 : array
+        Estimativa inicial dos parâmetros.
+    y_obs : array
+        Dados observados.
+    x_data : array, opcional
+        Variáveis independentes (passadas ao modelo).
+    max_iter : int
+        Número máximo de iterações.
+    tol : float
+        Tolerância para convergência (norma do gradiente).
+    mu0 : float
+        Parâmetro de amortecimento inicial.
+    delta_P : float
+        Perturbação relativa para cálculo de sensibilidades (1%).
+    verbose : bool
+        Se True, imprime histórico de iterações.
+    
+    Retorna
+    -------
+    dict
+        {'P': parâmetros estimados,
+         'iteracoes': número de iterações,
+         'historico': lista de normas do resíduo,
+         'cov': matriz de covariância,
+         'sigma_P': desvios padrão dos parâmetros,
+         'correlacao': matriz de correlação}
+    """
+    P = np.array(P0, dtype=float)
+    mu = mu0
+    historico = []
+    
+    for k in range(max_iter):
+        # 1. Avaliar modelo e resíduo
+        y_calc = modelo(P, x_data) if x_data is not None else modelo(P)
+        r = y_obs - y_calc
+        
+        # 2. Calcular Jacobiana por diferenças finitas
+        J = _jacobiana_finita(modelo, P, x_data, delta_P)
+        
+        # 3. Atualização LM
+        JTJ = J.T @ J
+        JTr = J.T @ r
+        I = np.eye(len(P))
+        
+        # Tenta passo; se reduzir resíduo, aceita; senão, aumenta mu
+        dP = np.linalg.solve(JTJ + mu * I, JTr)
+        P_novo = P + dP
+        
+        y_novo = modelo(P_novo, x_data) if x_data is not None else modelo(P_novo)
+        r_novo = y_obs - y_novo
+        
+        if np.sum(r_novo**2) < np.sum(r**2):
+            P = P_novo
+            mu = max(mu / 3, 1e-10)  # reduz amortecimento
+        else:
+            mu = min(mu * 5, 1e10)   # aumenta amortecimento
+        
+        norma_r = np.linalg.norm(r)
+        historico.append(norma_r)
+        
+        if verbose:
+            print(f"Iter {k+1:3d} | ||r|| = {norma_r:.6e} | P = {P}")
+        
+        if np.linalg.norm(dP) < tol:
+            break
+    
+    # Matriz de covariância (aproximação)
+    J_final = _jacobiana_finita(modelo, P, x_data, delta_P)
+    JTJ_final = J_final.T @ J_final
+    sigma2 = np.sum(r**2) / max(1, len(y_obs) - len(P))
+    cov = sigma2 * np.linalg.inv(JTJ_final)
+    sigma_P = np.sqrt(np.diag(cov))
+    
+    # Matriz de correlação
+    D = np.diag(1.0 / sigma_P)
+    correlacao = D @ cov @ D
+    
+    return {
+        "P": P,
+        "iteracoes": k + 1,
+        "historico": historico,
+        "cov": cov,
+        "sigma_P": sigma_P,
+        "correlacao": correlacao
+    }
+
+
+def _jacobiana_finita(modelo, P, x_data, delta_P):
+    """Calcula a Jacobiana por diferenças finitas centrais."""
+    n_params = len(P)
+    y0 = modelo(P, x_data) if x_data is not None else modelo(P)
+    n_obs = len(y0)
+    J = np.zeros((n_obs, n_params))
+    
+    for j in range(n_params):
+        dP = np.zeros(n_params)
+        dP[j] = max(abs(P[j]) * delta_P, 1e-12)
+        y_plus = modelo(P + dP, x_data) if x_data is not None else modelo(P + dP)
+        y_minus = modelo(P - dP, x_data) if x_data is not None else modelo(P - dP)
+        J[:, j] = (y_plus - y_minus) / (2 * dP[j])
+    
     return J
 
-if __name__ == "__main__":
-    def dummy_residual(p, x):
-        return p[0]*x + p[1] - (2.5*x + 1.0 + 0.1*np.random.randn(len(x)))
+
+# ============================================================================
+# ANÁLISE DE INCERTEZA
+# ============================================================================
+
+def intervalo_confianca(P_est: np.ndarray, sigma_P: np.ndarray,
+                        nivel: float = 0.95) -> tuple:
+    """
+    Calcula intervalo de confiança para os parâmetros estimados.
     
-    p_est, std, corr, cost, ok = levenberg_marquardt(dummy_residual, [1.0, 0.0], args=(np.linspace(0,10,20),))
-    print("p:", p_est, "±", std)
-    print("ρ:", corr, "| Custo:", cost, "| OK:", ok)
+    Assume distribuição normal.
+    
+    Retorna
+    -------
+    tuple
+        (P_inferior, P_superior)
+    """
+    from scipy.stats import norm
+    z = norm.ppf((1 + nivel) / 2)
+    return P_est - z * sigma_P, P_est + z * sigma_P
+
+
+def analisar_identificabilidade(cov: np.ndarray,
+                                 nomes: list = None) -> dict:
+    """
+    Analisa a identificabilidade dos parâmetros a partir da
+    matriz de covariância.
+    
+    Retorna
+    -------
+    dict
+        {'sigma_P': desvios padrão,
+         'cv': coeficientes de variação (%),
+         'correlacao': matriz de correlação,
+         'pares_correlacionados': lista de pares com |ρ| > 0.7}
+    """
+    sigma_P = np.sqrt(np.diag(cov))
+    D = np.diag(1.0 / sigma_P)
+    correlacao = D @ cov @ D
+    
+    # Identifica pares altamente correlacionados
+    pares = []
+    n = len(sigma_P)
+    for i in range(n):
+        for j in range(i + 1, n):
+            if abs(correlacao[i, j]) > 0.7:
+                nome_i = nomes[i] if nomes else f"P{i}"
+                nome_j = nomes[j] if nomes else f"P{j}"
+                pares.append((nome_i, nome_j, correlacao[i, j]))
+    
+    return {
+        "sigma_P": sigma_P,
+        "correlacao": correlacao,
+        "pares_correlacionados": pares
+    }

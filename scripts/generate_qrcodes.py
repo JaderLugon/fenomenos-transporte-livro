@@ -3,157 +3,67 @@
 Gerador de QR Codes para capítulos do livro
 "Fenômenos de Transporte: Fundamentos e Modelagem Computacional"
 
-Cada QR Code direciona para:
-- URL do capítulo no repositório
-- Parâmetros para chat contextual com Qwen
-- Metadados do capítulo para cache offline
+Cada QR Code contém uma URL direta para execução no Google Colab.
 
 Uso:
-    python generate_qrcodes.py                    # Todos os capítulos
-    python generate_qrcodes.py --chapter cap4     # Capítulo específico
+    python generate_qrcodes.py                    # Gera todos os QR Codes
+    python generate_qrcodes.py --chapter cap4     # Gera apenas cap4
     python generate_qrcodes.py --list             # Lista capítulos disponíveis
 """
 
 import argparse
-import json
 import qrcode
 from pathlib import Path
-from datetime import datetime
-from typing import Dict, List, Optional
-
-
-# Configuração dos capítulos
 from typing import Dict
 
+# =============================================================================
+# DICIONÁRIO DE CAPÍTULOS → URL DO COLAB
+# =============================================================================
 CHAPTERS: Dict[str, str] = {
     "cap1": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/01_fundamentos_fluidos.ipynb",
     "cap2": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/02_fundamentos_fluidos.ipynb",
     "cap3": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/03_balancos_conservacao.ipynb",
     "cap4": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/04_escoamento_tubulacoes.ipynb",
-    "cap5": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/05_hidrodinamica_canais.ipynb",
+    "cap5": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/05_hidrodinamica_canais_abertos.ipynb",
     "cap6": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/06_percolacao_meio_poroso.ipynb",
     "cap7": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/07_transferencia_calor.ipynb",
     "cap8": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/08_transferencia_calor.ipynb",
-    "cap9": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/09_aletras_superficies.ipynb",
-    "cap10": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/10_trocadores_calor.ipynb",
+    "cap9": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/09_trocadores_calor.ipynb",
+    "cap10": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/10_aletas_superficies.ipynb",
     "cap11": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/11_adveccao_dispersao.ipynb"
 }
 
-def build_qr_payload(chapter_id: str, include_chat: bool = True) -> str:
-    """
-    Constrói o payload JSON para o QR Code.
-    
-    O payload contém:
-    - URL do capítulo
-    - Metadados para contexto da IA
-    - Informações de versão e data
-    """
-    chap = CHAPTERS[chapter_id]
-    
-    payload = {
-        "chapter": chapter_id,
-        "title": chap["title"],
-        "volume": chap["volume"],
-        "urls": {
-            "latex": chap["url_base"],
-            "notebook": f"https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/{chap['notebook']}",
-            "data": f"https://github.com/JaderLugon/fenomenos-transporte-livro/tree/main/{chap['data_folder']}"
-        },
-        "qwen": {
-            "enabled": include_chat,
-            "context_id": chap["qwen_context"],
-            "api_endpoint": "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
-        },
-        "metadata": {
-            "generated": datetime.now().isoformat(),
-            "version": "1.0.0-pre",
-            "license": "CC-BY-NC-SA-4.0"
-        }
-    }
-    
-    # Codifica como string JSON compacta para QR Code menor
-    return json.dumps(payload, separators=(',', ':'))
 
-
-def generate_qrcode(
-    chapter_id: str, 
-    output_dir: Path,
-    size: int = 10,
-    border: int = 4,
-    include_chat: bool = True
-) -> Path:
+def generate_qrcode(url: str, output_path: Path, size: int = 10, border: int = 4):
     """
-    Gera QR Code para um capítulo.
+    Gera um QR Code para uma URL simples.
     
     Args:
-        chapter_id: ID do capítulo (ex: 'cap4')
-        output_dir: Diretório para salvar o QR Code
+        url: URL a ser codificada
+        output_path: Caminho para salvar o arquivo PNG
         size: Tamanho do módulo do QR Code (1-40)
         border: Largura da borda branca
-        include_chat: Incluir parâmetros para chat com IA
-        
-    Returns:
-        Path do arquivo gerado
     """
-    if chapter_id not in CHAPTERS:
-        raise ValueError(f"Capítulo '{chapter_id}' não encontrado. Use --list para ver disponíveis.")
-    
-    # Cria diretório se necessário
-    output_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Constrói payload e gera QR
-    payload = build_qr_payload(chapter_id, include_chat)
-    
     qr = qrcode.QRCode(
-        version=None,  # Auto-detect
+        version=None,  # Auto-detect based on content
         error_correction=qrcode.constants.ERROR_CORRECT_M,
         box_size=size,
         border=border,
     )
-    qr.add_data(payload)
+    qr.add_data(url)
     qr.make(fit=True)
     
-    # Cria imagem com cores da marca
-    img = qr.make_image(
-        fill_color="#0066CC",  # Azul Transporte
-        back_color="white"
-    )
+    # Cria imagem com cores personalizadas (opcional)
+    img = qr.make_image(fill_color="#0066CC", back_color="white")
     
-    # Salva arquivo
-    output_path = output_dir / f"{chapter_id}.png"
+    # Salva como PNG
     img.save(output_path, optimize=True)
-    
-    # Gera também versão SVG para LaTeX
-    svg_path = output_dir / f"{chapter_id}.svg"
-    img.save(svg_path)
-    
-    # Gera arquivo de metadados auxiliar
-    meta_path = output_dir / f"{chapter_id}.json"
-    with open(meta_path, 'w', encoding='utf-8') as f:
-        json.dump(CHAPTERS[chapter_id], f, indent=2, ensure_ascii=False)
-    
-    print(f"✓ QR Code gerado: {output_path}")
-    print(f"  SVG: {svg_path}")
-    print(f"  Metadados: {meta_path}")
-    
-    return output_path
-
-
-def generate_all(output_dir: Path, **kwargs) -> List[Path]:
-    """Gera QR Codes para todos os capítulos."""
-    paths = []
-    for chap_id in CHAPTERS:
-        try:
-            path = generate_qrcode(chap_id, output_dir, **kwargs)
-            paths.append(path)
-        except Exception as e:
-            print(f"✗ Erro ao gerar {chap_id}: {e}")
-    return paths
+    print(f"✓ QR Code salvo: {output_path}")
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Gerador de QR Codes para Fenômenos de Transporte"
+        description="Gerador de QR Codes para Fenômenos de Transporte (Google Colab)"
     )
     parser.add_argument(
         "--chapter", "-c",
@@ -163,8 +73,8 @@ def main():
     parser.add_argument(
         "--output", "-o",
         type=Path,
-        default=Path("qr/generated"),
-        help="Diretório de saída (padrão: qr/generated)"
+        default=Path("qr"),
+        help="Diretório de saída para os QR Codes (padrão: qr/)"
     )
     parser.add_argument(
         "--size", "-s",
@@ -174,11 +84,6 @@ def main():
         help="Tamanho do módulo QR (1-40, padrão: 10)"
     )
     parser.add_argument(
-        "--no-chat",
-        action="store_true",
-        help="Não incluir parâmetros de chat com IA no QR Code"
-    )
-    parser.add_argument(
         "--list", "-l",
         action="store_true",
         help="Listar capítulos disponíveis e sair"
@@ -186,25 +91,38 @@ def main():
     
     args = parser.parse_args()
     
+    # Criar diretório de saída se necessário
+    args.output.mkdir(parents=True, exist_ok=True)
+    
     if args.list:
         print("\n📚 Capítulos disponíveis:\n")
-        for cid, info in CHAPTERS.items():
-            vol = "I" if info["volume"] == 1 else "II"
-            print(f"  {cid:6} | Vol {vol} | {info['title']}")
+        for cid, url in CHAPTERS.items():
+            notebook = url.split("/")[-1]
+            print(f"  {cid:6} → {notebook}")
         print()
         return
     
-    include_chat = not args.no_chat
-    
     if args.chapter:
-        generate_qrcode(args.chapter, args.output, args.size, include_chat=include_chat)
+        if args.chapter not in CHAPTERS:
+            print(f"❌ Capítulo '{args.chapter}' não encontrado.")
+            print("Use --list para ver os capítulos disponíveis.")
+            return
+        
+        url = CHAPTERS[args.chapter]
+        output_file = args.output / f"{args.chapter}.png"
+        generate_qrcode(url, output_file, args.size)
+        print(f"\n🔗 URL codificada:\n{url}\n")
     else:
-        paths = generate_all(args.output, size=args.size, include_chat=include_chat)
-        print(f"\n✓ Gerados {len(paths)} QR Codes em {args.output}/")
+        print(f"🔄 Gerando QR Codes para {len(CHAPTERS)} capítulos...\n")
+        for cid, url in CHAPTERS.items():
+            output_file = args.output / f"{cid}.png"
+            generate_qrcode(url, output_file, args.size)
+        
+        print(f"\n✅ Concluído! {len(CHAPTERS)} QR Codes gerados em: {args.output}/")
         print("\n📌 Para inserir no LaTeX, use:")
-        print("   \\includegraphics[width=2cm]{qr/generated/capX.png}")
-        print("\n🔗 Teste os QR Codes com seu celular ou:")
-        print("   python -m qrcode_terminal < qr/generated/capX.png")
+        print("   \\includegraphics[width=2cm]{qr/capX.png}")
+        print("\n🔗 Teste com seu celular ou:")
+        print("   python -m qrcode_terminal < qr/capX.png")
 
 
 if __name__ == "__main__":

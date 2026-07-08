@@ -1,56 +1,88 @@
 fenomenos-transporte-livro/
-├── README.md
-├── LICENSE
 ├── .gitignore
-├── requirements.txt
+├── bibtex.txt
+├── data_structure.txt
 ├── environment.yml
-├── CITATION.cff
+├── exemplo_uso_programatico.py
+├── LICENSE
+├── README.md
+├── requirements.txt
+├── structure.txt
+├── casos/
+│   ├── 02_1_Classificador_Fluidos_Nao_Newtonianos.ipynb
+│   ├── 03_1_Balanco_Massa_Reator_CSTR.ipynb
+│   ├── 03_2_Calculadora_Numeros_Adimensionais.ipynb
+│   ├── 04_1_Solver_Colebrook_White.ipynb
+│   ├── 04_2_Bombeamento_Predio_Residencial.ipynb
+│   ├── 04_3_Sistema_Hidraulico_Carga_Pesada.ipynb
+│   ├── 05_1_Rio_Macae_Hidrodinamica.ipynb
+│   ├── 05_2_Profundidade_Normal_Canal_Trapezoidal.ipynb
+│   ├── 06_1_Percolacao_Terreno_Textura_Conhecida.ipynb
+│   ├── 06_2_Curva_Retencao_van_Genuchten.ipynb
+│   ├── 07_1_Forno_Padaria_Isolamento_Termico.ipynb
+│   ├── 07_2_Circuito_Termico_Parede_Composta.ipynb
+│   ├── 08_1_Perfil_Termico_Diurno_Solo.ipynb
+│   ├── 08_2_Estabilidade_Numerica_Diferencas_Finitas.ipynb
+│   ├── 09_1_Resfriamento_Oleo_Hidraulico.ipynb
+│   ├── 09_2_Condensador_Vapor_UTE.ipynb
+│   ├── 09_3_Caldeira_Industrial.ipynb
+│   ├── 10_1_Condensador_ACC_Tubos_Aletados.ipynb
+│   ├── 10_2_Dissipador_Termico_Processador.ipynb
+│   ├── 10_3_Aleta_Diferencas_Finitas_1D.ipynb
+│   ├── 11_1_Rio_Macae_Dispersao_Poluentes.ipynb
+│   ├── 11_2_Difusao_Artificial_Upwind.ipynb
+│   └── READMEcasos.md
 ├── docs/
-│   ├── figures/
-│   ├── tables/
-│   └── assets/
+│   ├── Templates_estudos_caso.md
+│   ├── Guia_professor.md
+│   └── Contribuindo.md
+├── notebooks/
+│   ├── 00_setup_check.ipynb
+│   ├── 01_introducao_fenomenos_transporte.ipynb
+│   ├── 02_fundamentos_fluidos.ipynb
+│   ├── 03_balancos_transportes_reynolds.ipynb
+│   ├── 04_escoamento_tubulacoes.ipynb
+│   ├── 05_hidrodinamica_canais_abertos.ipynb
+│   ├── 06_percolacao_meio_poroso.ipynb
+│   ├── 07_fundamentos_transferencia_calor.ipynb
+│   ├── 08_transferencia_calor_solo.ipynb
+│   ├── 09_trocadores_calor.ipynb
+│   ├── 10_aletas_superficies_estendidas.ipynb
+│   ├── 11_adveccao_dispersao_corpos_hidricos.ipynb
+│   ├── desafio_problemas_inverso.ipynb
+└── qwen_integration/
+│   ├── README.md                        ← Documentação da integração
+│   ├── qwen_client.py                   ← Cliente Python para API
+│   ├── chat_interface.ipynb             ← Interface interativa
+│   └── prompt_templates/                ← Templates de prompts
+│   │    ├── explicacao_conceito.txt
+│   │    ├── resolucao_exercicio.txt
+│   │    └── geracao_codigo.txt
+│   └── examples/                        ← Exemplos de uso
+│       └── exemplo_basico.py
+├── scripts/
+│   └── generate_qrcodes.py
 ├── src/
 │   ├── __init__.py
+│   ├── _requirements.txt
+│   ├── _exemplo_de_uso.txt
 │   ├── adveccao_difusao.py
 │   ├── adveccao_difusao_1d.py
+│   ├── aletas trocadores.py
 │   ├── balancos_gerais.py
 │   ├── calibracao_problema_inverso.py
 │   ├── canais_abertos.py
+│   ├── dispersao.py
 │   ├── escoamento_tubos.py
 │   ├── fundamentos_fluidos.py
+│   ├── generate_qrcodes.py
+│   ├── hidrodinâmica.py
 │   ├── mecanismos_transferencia_calor.py
+│   ├── meio poroso.py
 │   ├── percolacao_meio_poroso.py
 │   ├── problemas_inversos.py
 │   ├── resistencia_termica.py
 │   ├── solucao_escoamento_tubos.py
-│   └── transferencia_calor_solo.py
-├── notebooks/
-│   ├── 00_setup_check.ipynb
-│   ├── cap01_cap01_introducao_fenomenos_transporte.ipynb
-│   ├── cap02_fundamentos_fluidos.ipynb
-│   ├── cap03_balancos_transportes_reynolds.ipynb
-│   ├── cap04_escoamento_tubulacoes.ipynb
-│   ├── cap05_hidrodinamica_canais_abertos.ipynb
-│   ├── cap06_percolacao_meio_poroso.ipynb
-│   ├── cap07_fundamentos_transferencia_calor.ipynb
-│   ├── cap08_transferencia_calor_solo.ipynb
-│   ├── cap09_aletas_superficies_estendidas.ipynb
-│   ├── cap10_trocadores_calor.ipynb
-│   ├── cap11_adveccao_dispersao_corpos_hidricos.ipynb
-│   ├── desafio_problemas_inverso.ipynb
-│   └── generate_qrcodes.ipynb  ← NOVO: Gera QR Codes
-├── data/
-│   ├── rio_macae/
-│   ├── propriedades_materiais/
-│   └── casos_estudo/
-├── tests/
-│   ├── test_fluid_mechanics.py
-│   ├── test_heat_transfer.py
-│   └── test_numerical.py
-└── qwen_integration/
-    ├── qwen_client.py          ← NOVO: Cliente API Qwen
-    ├── chat_interface.ipynb    ← NOVO: Interface interativa
-    └── prompt_templates/
-        ├── explicacao_conceito.txt
-        ├── resolucao_exercicio.txt
-        └── geracao_codigo.txt
+│   ├── transferência calor.py
+│   ├── transferencia_calor_solo.py
+│   └── utils.py

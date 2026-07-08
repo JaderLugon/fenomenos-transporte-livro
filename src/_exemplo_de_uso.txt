@@ -1,0 +1,12 @@
+# Em um notebook do Cap. 5 (Hidrodinâmica)
+from src import hidrodinamica as hidro
+
+# Calcular profundidade normal do Rio Macaé
+hn = hidro.profundidade_normal(
+    Q=6.7, n=0.035, b=42.2, m=0, S0=1e-4
+)
+print(f"Profundidade normal: {hn:.3f} m")
+
+# Verificar estabilidade CFL
+dt_max = hidro.passo_tempo_cfl(U=0.22, h=0.71, dx=100)
+print(f"Δt máximo (CFL): {dt_max:.1f} s")
