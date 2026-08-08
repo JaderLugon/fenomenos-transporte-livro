@@ -20,17 +20,17 @@ from typing import Dict
 # DICIONÁRIO DE CAPÍTULOS → URL DO COLAB
 # =============================================================================
 CHAPTERS: Dict[str, str] = {
-    "cap1": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/01_fundamentos_fluidos.ipynb",
-    "cap2": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/02_fundamentos_fluidos.ipynb",
-    "cap3": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/03_balancos_conservacao.ipynb",
-    "cap4": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/04_escoamento_tubulacoes.ipynb",
-    "cap5": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/05_hidrodinamica_canais_abertos.ipynb",
-    "cap6": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/06_percolacao_meio_poroso.ipynb",
-    "cap7": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/07_transferencia_calor.ipynb",
-    "cap8": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/08_transferencia_calor.ipynb",
-    "cap9": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/09_trocadores_calor.ipynb",
-    "cap10": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/10_aletas_superficies.ipynb",
-    "cap11": "https://colab.research.google.com/github/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/11_adveccao_dispersao.ipynb"
+    "cap1": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/01_introducao_fenomenos_transporte.ipynb",
+    "cap2": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/02_fundamentos_fluidos_viscosidade.ipynb",
+    "cap3": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/03_balancos_conservacao.ipynb",
+    "cap4": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/04_escoamento_tubulacoes_bombeamento.ipynb",
+    "cap5": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/05_hidrodinamica_canais_abertos.ipynb",
+    "cap6": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/06_percolacao_meio_poroso.ipynb",
+    "cap7": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/07_fundamentos_transferencia_calor.ipynb",
+    "cap8": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/08_transferencia_calor_solo.ipynb",
+    "cap9": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/09_Trocadores_Calor.ipynb",
+    "cap10": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/10_aletas_superficies_estendidas.ipynb",
+    "cap11": "https://github.com/JaderLugon/fenomenos-transporte-livro/blob/main/notebooks/11_adveccao_dispersao_corpos_hidricos.ipynb"
 }
 
 

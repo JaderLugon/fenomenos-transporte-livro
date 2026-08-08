@@ -38,7 +38,7 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 2.1 | [Classificador de Fluidos Não-Newtonianos](02_1_Classificador_Fluidos_Nao_Newtonianos.ipynb) | Graduação | 30 min | Ajuste de dados reológicos ao modelo de Lei de Potência (Ostwald-de Waele) |
+| 2.X1 | [Classificador de Fluidos Não-Newtonianos](EC_02_X1_Classificador_Fluidos_Nao_Newtonianos) | Graduação | 30 min | Ajuste de dados reológicos ao modelo de Lei de Potência (Ostwald-de Waele) |
 
 ---
 
@@ -46,8 +46,8 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 3.1 | [Balanço de Massa em Reator CSTR](03_1_Balanco_Massa_Reator_CSTR.ipynb) | Graduação | 45 min | Resolução de EDO de primeira ordem com termo fonte |
-| 3.2 | [Calculadora de Números Adimensionais](03_2_Calculadora_Numeros_Adimensionais.ipynb) | Graduação | 30 min | Cálculo de Re, Pe, Pr, Sc com classificação de regimes |
+| 3.X1 | [Balanço de Massa em Reator CSTR](EC_03_X1_Balanco_Massa_Reator_CSTR) | Graduação | 45 min | Resolução de EDO de primeira ordem com termo fonte |
+| 3.X2 | [Calculadora de Números Adimensionais](EC_03_X2_Calculadora_Numeros_Adimensionais.ipynb) | Graduação | 30 min | Cálculo de Re, Pe, Pr, Sc com classificação de regimes |
 
 ---
 
@@ -55,8 +55,10 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 4.1 | [Sistema de Bombeamento em Prédio Residencial](04_1_Bombeamento_Predio_Residencial.ipynb) | Graduação | 60 min | Cálculo de perda de carga, seleção de bomba, análise de NPSH |
-| 4.2 | [Sistema Hidráulico para Elevação de Carga Pesada](04_2_Sistema_Hidraulico_Carga_Pesada.ipynb) | Pós-Graduação | 90 min | Dimensionamento de circuito hidráulico industrial com sincronismo |
+| 4.7 | [Sistema de Bombeamento em Prédio Residencial](EC_04_07_Bombeamento_Predio_Residencial.ipynb) | Graduação | 60 min | Cálculo de perda de carga, seleção de bomba, análise de NPSH |
+| 4.8 | [Sistema Hidráulico para Elevação de Carga Pesada](EC_04_08_Elevador_Carga_Hidraulico.ipynb) | Pós-Graduação | 90 min | Dimensionamento de circuito hidráulico industrial com sincronismo |
+| 4.X1 | [Solver Colebrook White](EC_04_X1_Solver_Colebrook_White.ipynb) | Pós-Graduação | 45 min | Newton-Raphson para equação não-linear implícita |
+
 
 ---
 
@@ -64,8 +66,8 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 5.1 | [Hidrodinâmica do Rio Macaé](05_1_Rio_Macae_Hidrodinamica.ipynb) | Pós-Graduação | 120 min | Simulação de onda de cheia com equações de Saint-Venant |
-| 5.2 | [Profundidade Normal em Canal Trapezoidal](05_2_Profundidade_Normal_Canal_Trapezoidal.ipynb) | Graduação | 45 min | Resolução numérica da equação de Manning |
+| 5.6 | [Hidrodinâmica do Rio Macaé](EC_05_06_Rio_Macae_Hidrodinamica.ipynb) | Pós-Graduação | 120 min | Simulação de onda de cheia com equações de Saint-Venant |
+| 5.X1 | [Profundidade Normal em Canal Trapezoidal](EC_05_X1_Profundidade_Normal_Canal_Trapezoidal.ipynb) | Graduação | 45 min | Resolução numérica da equação de Manning |
 
 ---
 
@@ -73,8 +75,8 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 6.1 | [Percolação em Terreno com Textura Conhecida](06_1_Percolacao_Terreno_Textura_Conhecida.ipynb) | Pós-Graduação | 90 min | Cálculo de perfil de potencial matricial com van Genuchten |
-| 6.2 | [Curva de Retenção de van Genuchten](06_2_Curva_Retencao_van_Genuchten.ipynb) | Graduação | 45 min | Comparação de curvas de retenção para diferentes texturas |
+| 6.6 | [Percolação em Terreno com Textura Conhecida](EC_06_06_Percolacao_Terreno_Textura_Conhecida.ipynb) | Pós-Graduação | 90 min | Cálculo de perfil de potencial matricial com van Genuchten |
+| 6.X1 | [Curva de Retenção de van Genuchten](EC_06_X1_Curva_Retencao_van_Genuchten.ipynb) | Graduação | 45 min | Comparação de curvas de retenção para diferentes texturas |
 
 ---
 
@@ -82,8 +84,8 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 7.1 | [Isolamento Térmico de Forno de Padaria](07_1_Forno_Padaria_Isolamento_Termico.ipynb) | Graduação | 60 min | Dimensionamento de isolamento com convecção e radiação |
-| 7.2 | [Circuito Térmico de Parede Composta](07_2_Circuito_Termico_Parede_Composta.ipynb) | Graduação | 45 min | Analogia elétrica para paredes multicamadas |
+| 7.8 | [Isolamento Térmico de Forno de Padaria](EC_07_08_Isolamento_Forno_Padaria.ipynb) | Graduação | 60 min | Dimensionamento de isolamento com convecção e radiação |
+| 7.X1 | [Circuito Térmico de Parede Composta](EC_07_X1_Circuito_Termico_Parede_Composta.ipynb) | Graduação | 45 min | Analogia elétrica para paredes multicamadas |
 
 ---
 
@@ -91,8 +93,10 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 8.1 | [Perfil Térmico Diurno em Solo](08_1_Perfil_Termico_Diurno_Solo.ipynb) | Pós-Graduação | 90 min | Solução numérica da equação de calor com k(θ) variável |
-| 8.2 | [Estabilidade Numérica de Diferenças Finitas](08_2_Estabilidade_Numerica_Diferencas_Finitas.ipynb) | Pós-Graduação | 60 min | Comparação de esquemas explícito, implícito e Crank-Nicolson |
+| 8.8 | [Perfil Térmico Diurno em Solo](EC_08_08_Perfil_Termico_Diurno_Solo.ipynb) | Pós-Graduação | 90 min | Solução numérica da equação de calor com k(θ) variável |
+| 8.X1 | [Estabilidade Numérica de Diferenças Finitas](EC_08_X1_Estabilidade_Numerica_Diferencas_Finitas.ipynb) | Pós-Graduação | 60 min | Comparação de esquemas explícito, implícito e Crank-Nicolson |
+| 8.X2 | [Simulacao Acoplada Calor Umidade Solo](EC_08_X2_Simulacao_Acoplada_Calor_Umidade_Solo.ipynb) | Pós-Graduação | 60 min | Comparação de esquemas explícito, implícito e Crank-Nicolson |
+
 
 ---
 
@@ -100,9 +104,9 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 9.1 | [Resfriamento de Óleo Hidráulico em Hidrelétrica](09_1_Resfriamento_Oleo_Hidraulico_Hidreletrica.ipynb) | Graduação | 60 min | Dimensionamento de trocador de placas óleo-água |
-| 9.2 | [Condensador de Vapor para UTE 100 MW](09_2_Condensador_Vapor_UTE_100MW.ipynb) | Pós-Graduação | 120 min | Projeto completo de condensador casco-tubo com análise ambiental |
-| 9.3 | [Caldeira Industrial para Geração de Vapor](09_3_Caldeira_Industrial_Vapor.ipynb) | Pós-Graduação | 90 min | Dimensionamento de caldeira flamotubular com NR13 |
+| 9.5 | [Resfriamento de Óleo Hidráulico em Hidrelétrica](EC_09_05_Resfriamento_Oleo_Hidraulico.ipynb) | Graduação | 60 min | Dimensionamento de trocador de placas óleo-água |
+| 9.6 | [Condensador de Vapor para UTE 100 MW](EC_09_06_Condensador_Vapor_UTE.ipynb) | Pós-Graduação | 120 min | Projeto completo de condensador casco-tubo com análise ambiental |
+| 9.7 | [Caldeira Industrial para Geração de Vapor](EC_09_07_Caldeira_Industrial.ipynb) | Pós-Graduação | 90 min | Dimensionamento de caldeira flamotubular com NR13 |
 
 ---
 
@@ -110,9 +114,9 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 10.1 | [Condensador a Ar (ACC) com Tubos Aletados](10_1_Condensador_ACC_Tubos_Aletados.ipynb) | Pós-Graduação | 120 min | Projeto de condensador seco para regiões áridas |
-| 10.2 | [Dissipador Térmico para Processador](10_2_Dissipador_Termico_Processador.ipynb) | Graduação | 60 min | Dimensionamento de heat sink para CPU de computador |
-| 10.3 | [Análise Térmica de Aleta por Diferenças Finitas](10_3_Aleta_Diferencas_Finitas_1D.ipynb) | Pós-Graduação | 90 min | Solução numérica da equação da aleta com refinamento de malha |
+| 10.5 | [Condensador a Ar (ACC) com Tubos Aletados](EC_10_05_Condensador_ACC_Tubos_Aletados.ipynb) | Pós-Graduação | 120 min | Projeto de condensador seco para regiões áridas |
+| 10.6 | [Dissipador Térmico para Processador](EC_10_06_Dissipador_Termico_Processador.ipynb) | Graduação | 60 min | Dimensionamento de heat sink para CPU de computador |
+| 10.7 | [Análise Térmica de Aleta por Diferenças Finitas](EC_10_07_Analise_Termica_Aleta_MDF.ipynb) | Pós-Graduação | 90 min | Solução numérica da equação da aleta com refinamento de malha |
 
 ---
 
@@ -120,8 +124,8 @@ Esta pasta contém **estudos de caso aplicados** que complementam os capítulos 
 
 | # | Título | Nível | Tempo | Descrição |
 |---|--------|-------|-------|-----------|
-| 11.1 | [Dispersão de Poluentes no Rio Macaé](11_1_Rio_Macae_Dispersao_Poluentes.ipynb) | Pós-Graduação | 120 min | Modelagem de transporte com coeficientes de Liu e Elder |
-| 11.2 | [Difusão Artificial em Esquemas Upwind](11_2_Difusao_Artificial_Upwind.ipynb) | Pós-Graduação | 60 min | Análise de erro numérico em esquemas de primeira ordem |
+| 11.5 | [Dispersão de Poluentes no Rio Macaé](EC_10_05_Condensador_ACC_Tubos_Aletados.ipynb) | Pós-Graduação | 120 min | Modelagem de transporte com coeficientes de Liu e Elder |
+| 11.X1 | [Difusão Artificial em Esquemas Upwind](EC_11_X1_Difusao_Artificial_Upwind.ipynb) | Pós-Graduação | 60 min | Análise de erro numérico em esquemas de primeira ordem |
 
 ---
 
