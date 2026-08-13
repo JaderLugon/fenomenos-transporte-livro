@@ -1,24 +1,36 @@
-\---
+# Guia de Contribuição
 
-## 📄 Arquivo 3: `docs/contribuindo.md`
-
-```markdown
-# 🤝 Guia de Contribuição
-
-> \*\*Obrigado por considerar contribuir com este repositório!\*\*  
-> Sua contribuição ajudará estudantes e professores em todo o Brasil a aprender Fenômenos de Transporte com materiais de qualidade.
+> **Obrigado por considerar contribuir com este repositório!**
+> Sua contribuição ajudará estudantes e professores em todo o Brasil a aprender
+> Fenômenos de Transporte com materiais de qualidade.
 
 ---
 
-## 📋 1. Como Posso Contribuir?
+## Sumário
 
-Existem várias formas de contribuir, mesmo sem ser expert em programação:
+1. Como Posso Contribuir?
+2. Fluxo de Trabalho para Contribuições
+3. Submetendo um Pull Request
+4. Criando Novos Estudos de Caso
+5. Padrões de Estilo
+6. Testando Suas Alterações
+7. Licença
+8. Código de Conduta
+9. Reconhecimento
+10. Dúvidas?
+
+---
+
+## 1. Como Posso Contribuir?
+
+Existem várias formas de contribuir, mesmo sem ser expert em programação.
 
 ### 1.1 Reportando Problemas
 
 Encontrou um erro no código, no notebook ou na documentação?
 
-1. Verifique se o problema já foi reportado nas \[Issues](https://github.com/JaderLugon/fenomenos-transporte-livro/issues)
+1. Verifique se o problema já foi reportado nas Issues:
+   github.com/JaderLugon/fenomenos-transporte-livro/issues
 2. Se não, abra uma nova Issue com:
    - Descrição clara do problema
    - Passos para reproduzir
@@ -30,492 +42,444 @@ Encontrou um erro no código, no notebook ou na documentação?
 
 Tem uma ideia para melhorar um estudo de caso existente?
 
-1. Abra uma Issue com o label `enhancement`
-2. Descreva sua ideia e os benefícios esperados
-3. Discuta com a comunidade antes de implementar
+1. Abra uma Issue com o label `enhancement`.
+2. Descreva sua ideia e os benefícios esperados.
+3. Discuta com a comunidade antes de implementar.
 
 ### 1.3 Criando Novos Estudos de Caso
 
 Desenvolveu um caso interessante em sua pesquisa ou disciplina?
 
-1. Siga o template em \[`template\_estudo\_caso.md`](template\_estudo\_caso.md)
-2. Submeta um Pull Request (veja seção 3)
+1. Leia o guia completo em `docs/GUIA_COMPLETO_NOTEBOOKS.md`.
+2. Consulte a numeração disponível em `casos/READMEcasos.md`.
+3. Submeta um Pull Request (veja Seção 3).
 
 ### 1.4 Corrigindo Bugs no Código
 
 Encontrou um bug e sabe como corrigir?
 
-1. Faça um fork do repositório
-2. Crie uma branch para sua correção
-3. Submeta um Pull Request com a correção
+1. Faça um fork do repositório.
+2. Crie uma branch para sua correção.
+3. Submeta um Pull Request com a correção.
 
 ### 1.5 Melhorando a Documentação
 
 Erros de digitação, explicações confusas, exemplos faltando?
 
 1. Documentação é tão importante quanto código!
-2. Submeta correções via Pull Request
+2. Submeta correções via Pull Request.
 
 ---
 
-## 🚀 2. Fluxo de Trabalho para Contribuições
+## 2. Fluxo de Trabalho para Contribuições
 
 ### 2.1 Para Contribuições Simples (Documentação, Typos)
 
-```bash
-# 1. Edite diretamente no GitHub (botão "Edit" no arquivo)
-# 2. Faça o commit com mensagem descritiva
-# 3. Abra um Pull Request
+1. Edite diretamente no GitHub (botão "Edit" no arquivo).
+2. Faça o commit com mensagem descritiva.
+3. Abra um Pull Request.
 
+### 2.2 Para Contribuições Substanciais (Novos Casos, Features)
 
+    # 1. Fork o repositório no GitHub
 
-\### 2.2 Para Contribuições Substanciais (Novos Casos, Features)
+    # 2. Clone seu fork localmente
+    git clone https://github.com/SEU_USUARIO/fenomenos-transporte-livro.git
+    cd fenomenos-transporte-livro
 
-\# 1. Fork o repositório no GitHub
+    # 3. Configure o upstream
+    git remote add upstream https://github.com/JaderLugon/fenomenos-transporte-livro.git
 
-\# 2. Clone seu fork localmente
+    # 4. Crie uma branch para sua contribuição
+    git checkout -b feature/nome-da-sua-contribuicao
 
-git clone https://github.com/SEU\_USUARIO/fenomenos-transporte-livro.git
+    # 5. Faça suas alterações e commits
+    git add .
+    git commit -m "Descrição clara da alteração"
 
-cd fenomenos-transporte-livro
+    # 6. Mantenha sua branch atualizada
+    git fetch upstream
+    git rebase upstream/main
 
+    # 7. Envie para seu fork
+    git push origin feature/nome-da-sua-contribuicao
 
+    # 8. Abra um Pull Request no GitHub
 
-\# 3. Configure o upstream
+---
 
-git remote add upstream https://github.com/JaderLugon/fenomenos-transporte-livro.git
+## 3. Submetendo um Pull Request
 
-
-
-\# 4. Crie uma branch para sua contribuição
-
-git checkout -b feature/nome-da-sua-contribuicao
-
-
-
-\# 5. Faça suas alterações e commits
-
-git add .
-
-git commit -m "Descrição clara da alteração"
-
-
-
-\# 6. Mantenha sua branch atualizada
-
-git fetch upstream
-
-git rebase upstream/main
-
-
-
-\# 7. Envie para seu fork
-
-git push origin feature/nome-da-sua-contribuicao
-
-
-
-\# 8. Abra um Pull Request no GitHub
-
-
-
-📝 3. Submetendo um Pull Request
-
-3.1 Checklist Antes de Submeter
+### 3.1 Checklist Antes de Submeter
 
 Antes de abrir um Pull Request, verifique:
 
-O código executa sem erros
+- [ ] O código executa sem erros.
+- [ ] As alterações seguem o estilo do projeto.
+- [ ] A documentação foi atualizada (se necessário).
+- [ ] Os commits possuem mensagens claras e descritivas.
+- [ ] Não há arquivos desnecessários (.DS_Store, __pycache__, etc.).
+- [ ] O Pull Request referencia a Issue relacionada (se houver).
 
-As alterações seguem o estilo do projeto
-
-A documentação foi atualizada (se necessário)
-
-Os commits possuem mensagens claras e descritivas
-
-Não há arquivos desnecessários (.DS\_Store, \_\_pycache\_\_, etc.)
-
-O Pull Request referencia a Issue relacionada (se houver)
-
-
-
-3.2 Estrutura do Pull Request
+### 3.2 Estrutura do Pull Request
 
 Use o seguinte template ao abrir um PR:
 
-\## Descrição
+    ## Descrição
+    [Descreva brevemente o que este PR faz]
 
-\[Descreva brevemente o que este PR faz]
+    ## Tipo de Mudança
+    - [ ] Correção de bug
+    - [ ] Nova funcionalidade
+    - [ ] Novo estudo de caso
+    - [ ] Melhoria de documentação
+    - [ ] Outro (especifique)
 
+    ## Issue Relacionada
+    Closes #[número da issue]
 
+    ## Checklist
+    - [ ] Meu código segue o estilo do projeto
+    - [ ] Fiz uma auto-revisão do meu código
+    - [ ] Comentei partes complexas do código
+    - [ ] Atualizei a documentação correspondente
+    - [ ] Minhas alterações não geram novos warnings
+    - [ ] Testei minhas alterações localmente
+    - [ ] O notebook executa do início ao fim sem erros (se aplicável)
 
-\## Tipo de Mudança
+    ## Screenshots (se aplicável)
+    [Adicione screenshots das alterações visuais]
 
-\- \[ ] Correção de bug
+    ## Informações Adicionais
+    [Qualquer informação relevante para os revisores]
 
-\- \[ ] Nova funcionalidade
+### 3.3 Processo de Revisão
 
-\- \[ ] Novo estudo de caso
+1. **Submissão:** Você abre o Pull Request.
+2. **Revisão automática:** GitHub Actions executa testes (se configurados).
+3. **Revisão humana:** Mantenedores revisam o código.
+4. **Discussão:** Possíveis ajustes são solicitados.
+5. **Aprovação:** PR é aprovado e mergeado.
+6. **Agradecimento:** Seu nome é adicionado à lista de contribuidores.
 
-\- \[ ] Melhoria de documentação
+---
 
-\- \[ ] Outro (especifique)
+## 4. Criando Novos Estudos de Caso
 
+Esta é a forma mais valiosa de contribuir com o repositório. Siga rigorosamente
+o guia completo em `docs/GUIA_COMPLETO_NOTEBOOKS.md`.
 
+### 4.1 Convenção de Numeração
 
-\## Issue Relacionada
+Antes de criar um caso novo, verifique a numeração correta.
 
-Closes #\[número da issue]
+#### Casos publicados no livro
 
+Recebem o número do capítulo e da seção onde estão localizados:
 
+    EC_Capitulo_Secao_TemaPrincipal.ipynb
 
-\## Checklist
+Exemplo: EC_05_06_Rio_Macae_Hidrodinamica.ipynb
 
-\- \[ ] Meu código segue o estilo do projeto
+#### Casos novos (contribuições da comunidade)
 
-\- \[ ] Fiz uma auto-revisão do meu código
+Recebem o número do capítulo, a letra X e um número sequencial crescente:
 
-\- \[ ] Comentei partes complexas do código
+    EC_Capitulo_X_Sequencial_TemaPrincipal.ipynb
 
-\- \[ ] Atualizei a documentação correspondente
+Exemplo: EC_05_X2_Onda_Cheia_Saint_Venant.ipynb
 
-\- \[ ] Minhas alterações não geram novos warnings
+### 4.2 Regras Importantes
 
-\- \[ ] Testei minhas alterações localmente
+- Consulte `casos/READMEcasos.md` para verificar o próximo X disponível no capítulo.
+- Nunca reutilize um número sequencial, mesmo que um caso tenha sido removido.
+- O número do capítulo deve sempre ter 2 dígitos (04, 07, 11).
+- Ao ser incorporado ao livro, um caso X é renumerado para o formato de seção.
 
+### 4.3 Checklist do Caso Novo
 
+Antes de submeter, confirme que seu caso possui:
 
-\## Screenshots (se aplicável)
+- [ ] Cabeçalho com metadados completos (capítulo, nível, tempo, autor).
+- [ ] 5 a 7 objetivos de aprendizagem com verbos de ação.
+- [ ] Todas as 12 seções na ordem correta (0 a 11).
+- [ ] Verificação prévia incluída e aprovada.
+- [ ] Equações em LaTeX com definição de variáveis e unidades.
+- [ ] Código vetorizado e comentado em português.
+- [ ] Gráficos com títulos, eixos, legendas e observações pedagógicas.
+- [ ] Análise de sensibilidade incluída.
+- [ ] Discussão com interpretação, limitações (mínimo 3) e aplicações (mínimo 2).
+- [ ] Bloco de navegação no final.
+- [ ] Execução sem erros do início ao fim.
+- [ ] Adição do link em `casos/READMEcasos.md`.
 
-\[Adicione screenshots das alterações visuais]
+### 4.4 Capítulos Disponíveis para Contribuição
 
+Os capítulos do livro abrangem os seguintes temas. Ao criar um caso novo,
+associe-o ao capítulo mais adequado:
 
+| Capítulo | Tema |
+|:---:|:---|
+| 1 | Introdução às Analogias / Fundamentos e Motivação |
+| 2 | Fundamentos dos Fluidos e Viscosidade |
+| 3 | Modelagem Matemática do Escoamento |
+| 4 | Escoamento em Tubulações e Bombeamento |
+| 5 | Hidrodinâmica de Canais Abertos |
+| 6 | Percolação em Meio Poroso |
+| 7 | Fundamentos de Transferência de Calor |
+| 8 | Transferência de Calor em Solos |
+| 9 | Trocadores de Calor |
+| 10 | Aletas e Superfícies Estendidas |
+| 11 | Transporte de Calor e Massa em Corpos Hídricos |
 
-\## Informações Adicionais
+---
 
-\[Qualquer informação relevante para os revisores]
+## 5. Padrões de Estilo
 
+As diretrizes completas de formatação e rigor técnico estão em
+`docs/GUIA_COMPLETO_NOTEBOOKS.md`. Abaixo, um resumo rápido.
 
+### 5.1 Python (PEP 8)
 
-3.3 Processo de Revisão
+Siga o PEP 8 para código Python.
 
-Submissão: Você abre o Pull Request
+Exemplo correto:
 
-Revisão automática: GitHub Actions executa testes (se configurados)
+    def calcular_perda_carga(f, L, D, V, g=9.81):
+        """Calcula a perda de carga distribuída pela equação de Darcy-Weisbach."""
+        return f * (L / D) * (V**2 / (2 * g))
 
-Revisão humana: Mantenedores revisam o código
+Exemplo incorreto:
 
-Discussão: Possíveis ajustes são solicitados
+    def calc(f,L,D,V,g=9.81):
+        return f*(L/D)*(V**2/(2*g))
 
-Aprovação: PR é aprovado e mergeado
-
-Agradecimento: Seu nome é adicionado à lista de contribuidores
-
-
-
-🎨 4. Padrões de Estilo
-
-4.1 Python (PEP 8)
-
-Siga o PEP 8 para código Python:
-
-\# ✅ Bom
-
-def calcular\_perda\_carga(f, L, D, V, g=9.81):
-
-&#x20;   """Calcula a perda de carga distribuída pela equação de Darcy-Weisbach."""
-
-&#x20;   return f \* (L / D) \* (V\*\*2 / (2 \* g))
-
-
-
-\# ❌ Ruim
-
-def calc(f,L,D,V,g=9.81):
-
-&#x20;   return f\*(L/D)\*(V\*\*2/(2\*g))
-
-
-
-4.2 Docstrings
+### 5.2 Docstrings
 
 Use docstrings no estilo NumPy:
 
-def manning\_vazao(n, A, Rh, S0):
+    def manning_vazao(n, A, Rh, S0):
+        """
+        Calcula a vazão pela equação de Manning (SI).
 
-&#x20;   """
+        Parâmetros
+        ----------
+        n : float
+            Coeficiente de rugosidade de Manning [s/m^(1/3)].
+        A : float
+            Área molhada [m²].
+        Rh : float
+            Raio hidráulico [m].
+        S0 : float
+            Declividade do fundo [m/m].
 
-&#x20;   Calcula a vazão pela equação de Manning (SI).
+        Retorna
+        -------
+        float
+            Vazão [m³/s].
 
-&#x20;   
+        Exemplo
+        -------
+        >>> manning_vazao(0.035, 30.0, 0.71, 1e-4)
+        6.80
+        """
+        return (1.0 / n) * A * (Rh ** (2.0 / 3.0)) * (S0 ** 0.5)
 
-&#x20;   Parâmetros
+### 5.3 Notebooks Jupyter
 
-&#x20;   ----------
+- Nomeie células com títulos em markdown.
+- Comente o código explicando a física, não apenas a sintaxe.
+- Use LaTeX para equações matemáticas.
+- Inclua visualizações com legendas claras.
+- Mantenha a ordem de execução linear (Execute All e depois Salve).
+- Inclua observações pedagógicas após cada gráfico.
 
-&#x20;   n : float
+### 5.4 Nomenclatura de Arquivos
 
-&#x20;       Coeficiente de rugosidade de Manning \[s/m^(1/3)].
+Siga o padrão estabelecido na Seção 4.1:
 
-&#x20;   A : float
+    notebooks/
+        NN_nome_capitulo.ipynb
+        Exemplo: 04_escoamento_tubulacoes.ipynb
 
-&#x20;       Área molhada \[m²].
+    casos/
+        EC_Capitulo_Secao_TemaPrincipal.ipynb      (caso publicado)
+        EC_Capitulo_X_Sequencial_TemaPrincipal.ipynb (caso novo)
 
-&#x20;   Rh : float
+Onde:
+- Capitulo = número do capítulo (2 dígitos)
+- Secao = número da seção do livro
+- X = marcador literal de caso complementar
+- Sequencial = número crescente dentro do capítulo
+- TemaPrincipal = descrição clara e concisa
 
-&#x20;       Raio hidráulico \[m].
+---
 
-&#x20;   S0 : float
+## 6. Testando Suas Alterações
 
-&#x20;       Declividade do fundo \[m/m].
+### 6.1 Teste Local
 
-&#x20;   
+Antes de submeter, teste suas alterações.
 
-&#x20;   Retorna
+Dependências mínimas:
 
-&#x20;   -------
+    numpy>=1.21.0
+    scipy>=1.7.0
+    matplotlib>=3.4.0
+    pandas>=1.3.0
+    jupyter>=1.0.0
 
-&#x20;   float
-
-&#x20;       Vazão \[m³/s].
-
-&#x20;   
-
-&#x20;   Exemplo
-
-&#x20;   -------
-
-&#x20;   >>> manning\_vazao(0.035, 30.0, 0.71, 1e-4)
-
-&#x20;   6.80
-
-&#x20;   """
-
-&#x20;   return (1.0 / n) \* A \* (Rh \*\* (2.0 / 3.0)) \* (S0 \*\* 0.5)
-
-
-
-4.3 Notebooks Jupyter
-
-Nomeie células com títulos em markdown (# Título)
-
-Comente o código explicando a lógica
-
-Use LaTeX para equações matemáticas
-
-Inclua visualizações com legendas claras
-
-Mantenha a ordem de execução linear (Execute All → Salve)
-
-
-
-4.4 Nomenclatura de Arquivos
-
-Siga o padrão estabelecido:
-
-notebooks/
-
-└── NN\_nome\_capitulo.ipynb          # Ex: 04\_escoamento\_tubulacoes.ipynb
-
-
-
-casos/
-
-└── NN\_X\_Nome\_Do\_Caso.ipynb         # Ex: 04\_1\_Bombeamento\_Predio\_Residencial.ipynb
-
-&#x20;   ├── NN = número do capítulo
-
-&#x20;   ├── X = número sequencial do caso
-
-&#x20;   └── Nome\_Do\_Caso = descrição clara (use CamelCase ou snake\_case)
-
-
-
-🧪 5. Testando Suas Alterações
-
-5.1 Teste Local
-
-Antes de submeter, teste suas alterações:
-
-numpy>=1.21.0
-
-scipy>=1.7.0
-
-matplotlib>=3.4.0
-
-pandas>=1.3.0
-
-jupyter>=1.0.0
-
-
-
-5.3 Teste de Reprodutibilidade
+### 6.2 Teste de Reprodutibilidade
 
 Para estudos de caso:
 
-Clone o repositório em um ambiente limpo
+1. Clone o repositório em um ambiente limpo.
+2. Execute o notebook do início ao fim (Execute All).
+3. Verifique se os resultados são idênticos aos esperados.
+4. Teste em pelo menos dois sistemas operacionais diferentes (se possível).
+5. Confirme que o tempo de execução total é inferior a 5 minutos.
 
-Execute o notebook do início ao fim
+### 6.3 Teste de Legibilidade
 
-Verifique se os resultados são idênticos aos esperados
+- Todos os gráficos possuem títulos, rótulos nos eixos e legendas?
+- As tabelas estão formatadas corretamente?
+- As equações estão em LaTeX e legíveis?
+- Os comentários explicam a física, não apenas o código?
 
-Teste em pelo menos dois sistemas operacionais diferentes
+---
 
+## 7. Licença
 
-
-📜 6. Licença
-
-6.1 Licença do Código
+### 7.1 Licença do Código
 
 O código deste repositório está sob a licença MIT:
 
-MIT License
+    MIT License
 
-Copyright (c) 2026 Jader Lugon Junior
+    Copyright (c) 2026 Jader Lugon Junior
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
 
-of this software and associated documentation files (the "Software"), to deal
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
 
-in the Software without restriction...
+### 7.2 Licença dos Estudos de Caso
 
+Os estudos de caso estão sob a licença Creative Commons
+Attribution-ShareAlike 4.0 (CC-BY-SA-4.0):
 
+- Você pode compartilhar e adaptar o material.
+- Para qualquer fim, inclusive comercial.
+- Desde que dê crédito ao autor e compartilhe pela mesma licença.
 
-6.2 Licença dos Estudos de Caso
+### 7.3 Licença do Livro
 
-Os estudos de caso estão sob a licença Creative Commons Attribution-ShareAlike 4.0 (CC-BY-SA-4.0):
+O livro comercial possui direitos autorais reservados e está disponível para
+compra via Kindle e editoras parceiras. Este repositório contém apenas
+materiais complementares abertos.
 
-✅ Você pode: compartilhar e adaptar o material
+### 7.4 Licenciamento da Sua Contribuição
 
-✅ Para qualquer fim, inclusive comercial
+Ao submeter um Pull Request, você concorda que sua contribuição será
+licenciada sob os mesmos termos do projeto (MIT para código, CC-BY-SA-4.0
+para conteúdo educacional).
 
-⚠️ Desde que: dê crédito ao autor e compartilhe pela mesma licença
+---
 
+## 8. Código de Conduta
 
+### 8.1 Nosso Compromisso
 
-6.3 Licença do Livro
+Este projeto adota um ambiente acolhedor, respeitoso e livre de assédio para
+todos os contribuidores, independentemente de:
 
-O livro comercial possui direitos autorais reservados e está disponível para compra via Kindle e editoras parceiras. Este repositório contém apenas materiais complementares abertos.
+- Idade, corpo, deficiência, etnia, identidade de gênero
+- Nível de experiência, educação, status socioeconômico
+- Nacionalidade, aparência, raça, religião
+- Identidade e orientação sexual
 
+### 8.2 Comportamento Esperado
 
+- Use linguagem acolhedora e inclusiva.
+- Respeite pontos de vista e experiências diferentes.
+- Aceite críticas construtivas com elegância.
+- Foque no que é melhor para a comunidade.
+- Demonstre empatia com outros membros.
 
-🤝 7. Código de Conduta
+### 8.3 Comportamento Inaceitável
 
-7.1 Nosso Compromisso
+- Uso de linguagem ou imagens sexualizadas.
+- Trolling, insultos e ataques pessoais.
+- Assédio público ou privado.
+- Publicação de informações privadas sem autorização.
+- Outra conduta considerada inadequada.
 
-Este projeto adota um ambiente acolhedor, respeitoso e livre de assédio para todos os contribuidores, independentemente de:
-
-Idade, corpo, deficiência, etnia, identidade de gênero
-
-Nível de experiência, educação, status socioeconômico
-
-Nacionalidade, aparência, raça, religião
-
-Identidade e orientação sexual
-
-
-
-7.2 Comportamento Esperado
-
-✅ Use linguagem acolhedora e inclusiva
-
-✅ Respeite pontos de vista e experiências diferentes
-
-✅ Aceite críticas construtivas com elegância
-
-✅ Foque no que é melhor para a comunidade
-
-✅ Demonstre empatia com outros membros
-
-
-
-7.3 Comportamento Inaceitável
-
-❌ Uso de linguagem ou imagens sexualizadas
-
-❌ Trolling, insultos e ataques pessoais
-
-❌ Assédio público ou privado
-
-❌ Publicação de informações privadas sem autorização
-
-❌ Outra conduta considerada inadequada
-
-
-
-7.4 Como Reportar
+### 8.4 Como Reportar
 
 Casos de comportamento abusivo podem ser reportados para:
 
-📧 jlugonjr@gmail.com
+Email: jlugonjr@gmail.com
 
-Todas as queixas serão revisadas e investigadas, com resposta adequada às circunstâncias.
+Todas as queixas serão revisadas e investigadas, com resposta adequada às
+circunstâncias.
 
+---
 
+## 9. Reconhecimento
 
-🎓 8. Reconhecimento
+### 9.1 Lista de Contribuidores
 
-8.1 Lista de Contribuidores
+Todos os contribuidores são reconhecidos no arquivo `CONTRIBUTORS.md` e no
+`README.md` principal.
 
-Todos os contribuidores são reconhecidos no arquivo CONTRIBUTORS.md e no README principal.
-
-
-
-8.2 Citação Acadêmica
+### 9.2 Citação Acadêmica
 
 Se você utilizar este material em pesquisa ou ensino, cite como:
 
-@book{lugon2026fenomenos,
+    @book{lugon2026fenomenos,
+      title={Fenômenos de Transporte: Fundamentos e Modelagem Computacional},
+      author={Lugon Junior, Jader},
+      year={2026},
+      publisher={Repositório GitHub},
+      url={https://github.com/JaderLugon/fenomenos-transporte-livro}
+    }
 
-&#x20; title={Fenômenos de Transporte: Fundamentos e Modelagem Computacional},
+### 9.3 Citação de um Estudo de Caso Específico
 
-&#x20; author={Lugon Junior, Jader},
+Para citar um estudo de caso individual:
 
-&#x20; year={2026},
+    @misc{lugon2026caso,
+      title={Estudo de Caso EC_05_06 — Hidrodinâmica do Rio Macaé},
+      author={Lugon Junior, Jader},
+      year={2026},
+      howpublished={\url{https://github.com/JaderLugon/fenomenos-transporte-livro}},
+      note={Repositório Fenômenos de Transporte}
+    }
 
-&#x20; publisher={Repositório GitHub},
+---
 
-&#x20; url={https://github.com/JaderLugon/fenomenos-transporte-livro}
-
-}
-
-
-
-❓ 9. Dúvidas?
+## 10. Dúvidas?
 
 Se tiver dúvidas sobre como contribuir:
 
-Leia a documentação: Este guia e o template devem responder a maioria das perguntas
+1. **Leia a documentação:** Este guia e o `GUIA_COMPLETO_NOTEBOOKS.md`
+   devem responder a maioria das perguntas.
+2. **Abra uma Issue:** Use o label `question` para dúvidas gerais.
+3. **Entre em contato:** jlugonjr@gmail.com
 
-Abra uma Issue: Use o label question para dúvidas gerais
+---
 
-Entre em contato: jlugonjr@gmail.com
+## Obrigado por fazer parte desta comunidade!
 
+Cada contribuição, por menor que seja, faz a diferença. Juntos, construímos
+um material de qualidade para o ensino de Fenômenos de Transporte no Brasil.
 
+---
 
-🎓 Obrigado por fazer parte desta comunidade!
-
-Cada contribuição, por menor que seja, faz a diferença.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+Coleção "Fenômenos de Transporte: Fundamentos e Modelagem Computacional"
+Guia de Contribuição — Versão 2.0 — Agosto de 2026
